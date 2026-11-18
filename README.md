@@ -4,10 +4,10 @@ Projeto Integrador de Sistemas Operacionais, organizado em três entregas: simul
 
 ## Links
 
-- [Jogar KernelPlay](https://pedrobrassi.github.io/kernel-play/kernelPlay/)
-- [Modo apresentação](https://pedrobrassi.github.io/kernel-play/kernelPlay/?apresentacao)
+- [Jogar KernelPlay](https://pedrobrassi.github.io/projeto-s.o/kernelPlay/)
+- [Modo apresentação](https://pedrobrassi.github.io/projeto-s.o/kernelPlay/?apresentacao)
 - [Padlet do grupo](https://padlet.com/pedroluccas2/grupo-3-processos-e-threads-s024zwdrjwwsaqd4z88l)
-- [Repositório](https://github.com/PedroBrassi/kernel-play)
+- [Repositório](https://github.com/PedroBrassi/projeto-s.o)
 
 ## Estrutura
 
@@ -43,7 +43,7 @@ O conteúdo didático sobre xv6 dentro do jogo não comprova a execução da dem
 
 Abra `kernelPlay/index.html` no navegador. O jogo usa HTML, CSS e JavaScript puro e não exige instalação de dependências.
 
-O arquivo `index.html` da raiz mantém a entrada do GitHub Pages. A pasta `kernelPlay/` foi preservada para manter o link já compartilhado. A reorganização da documentação não exige alterar o caminho do site nem sua configuração de publicação. Alterações locais só aparecem online depois de enviadas ao GitHub e publicadas.
+O arquivo `index.html` da raiz mantém a entrada do GitHub Pages. A pasta `kernelPlay/` foi preservada. Após a renomeação do repositório para `projeto-s.o`, o endereço público passou a ser `https://pedrobrassi.github.io/projeto-s.o/kernelPlay/`. Atualize os links compartilhados anteriormente com `/kernel-play/`. Alterações locais só aparecem online depois de enviadas ao GitHub e publicadas.
 
 ## Trabalho em equipe
 

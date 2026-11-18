@@ -72,7 +72,7 @@ As explicações mostram a conta completa (por exemplo, o diagrama de Gantt e a 
 Para criar um roteiro novo, acrescente um objeto em `roteiros` no `js/laboratorio.js` (o formato está comentado no topo do arquivo). Para um treino novo, escreva uma função que devolva um desafio `multipla` ou `substituicao` e registre-a em `treinos`.
 
 ## Modo apresentação
-Abra o jogo com `?apresentacao` no fim do endereço, por exemplo `kernelPlay/index.html?apresentacao` ou `https://pedrobrassi.github.io/kernel-play/kernelPlay/?apresentacao`.
+Abra o jogo com `?apresentacao` no fim do endereço, por exemplo `kernelPlay/index.html?apresentacao` ou `https://pedrobrassi.github.io/projeto-s.o/kernelPlay/?apresentacao`.
 - Todas as etapas ficam liberadas.
 - Dentro da lição aparece a barra **Ir para:**, que pula direto para qualquer desafio (C = conceito, Q = questão, O = ordenar, A = associar, S = simulação, T = terminal, R = roteiro) ou para os cartões do xv6 e do Linux.
 - A estabilidade nunca zera sozinha (para em 20%). Para mostrar o kernel panic, use o link **Mostrar a tela de kernel panic** na trilha.
