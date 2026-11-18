@@ -1,8 +1,31 @@
 # Trilha 5 — Dispositivos e Entrada/Saída
 
-Seis etapas com conceitos, duas questões e um exercício de ordenação ou associação por etapa. As páginas do manual são liberadas ao concluir cada etapa; o modo apresentação permite consultá-las durante a apresentação.
+> **Origem:** conteúdo do KernelPlay organizado em seis fases; associação bibliográfica conferida nos textos oficiais do autor. Os números e títulos das aulas da disciplina não foram informados para esta trilha.
+> **Livro de referência:** MAZIERO, Carlos A. *Sistemas Operacionais: Conceitos e Mecanismos*. Curitiba: DINF/UFPR, 2019 — Parte V, “Gestão de entrada/saída”, com foco nos caps. 19–20 (p. 235–260) e apoio do cap. 22, §22.4.
+> **Versão consultada:** PDF oficial compilado em 26/06/2026. As páginas indicadas são as impressas no livro, não o contador do leitor de PDF; outras compilações podem ter paginação diferente.
 
-## 5.1 — DMA — Direct Memory Access
+| Fase | Aula | Tema | Livro (Maziero) |
+|---|---|---|---|
+| 5.1 | Estudo dirigido | DMA: preparação, transferência e conclusão | cap. 20, §20.5.3, p. 256–258 |
+| 5.2 | Estudo dirigido | Interrupções: sinalização, tratadores e retorno à execução | cap. 19, §19.6, p. 243–247; cap. 20, §§20.5.2 e 20.6, p. 254–256 e 258–260 |
+| 5.3 | Estudo dirigido | Drivers e organização em camadas do software de E/S | cap. 20, §§20.2–20.4, p. 248–252 |
+| 5.4 | Estudo dirigido | Classes de dispositivos e arquivos especiais em /dev | cap. 20, §20.3, p. 249–251; cap. 22, §22.4, p. 294–295 |
+| 5.5 | Estudo dirigido | Controle de dispositivos por ioctl | cap. 20, §20.4, p. 251–252 |
+| 5.6 | Estudo dirigido | Buffers, cache de blocos e double buffering | apoio: cap. 20, §20.5.2, p. 254–256; cache e double buffering: complemento técnico |
+
+“Estudo dirigido” identifica o roteiro desta documentação, sem atribuir números de aula ao professor. A numeração 5.1–5.6 corresponde às etapas existentes no jogo.
+
+## Organização da leitura
+
+O recorte principal usa os capítulos de hardware e software de E/S. As aplicações em Linux e xv6 são acompanhadas por referências técnicas próprias. O tratamento de cache e double buffering na fase 5.6 é complementar; não é apresentado como uma seção específica de Maziero.
+
+O jogo contém seis etapas, com um conceito, duas questões e uma atividade de ordenação ou associação em cada uma. O manual libera as páginas após a conclusão; no modo apresentação elas já ficam acessíveis.
+
+---
+
+## Fase 5.1 — DMA — Direct Memory Access
+
+### Conceito e funcionamento
 
 Transferência de dados entre um dispositivo e a memória sem a CPU copiar cada unidade de dados.
 
@@ -10,7 +33,26 @@ O driver prepara buffers e descritores com endereços acessíveis ao dispositivo
 
 Exemplo: O driver VirtIO do xv6 prepara descritores que apontam para os dados de um buffer; o dispositivo emulado usa esses endereços para realizar a operação.
 
-## 5.2 — IRQ — Interrupção de hardware
+> **Referência de estudo:** Maziero, cap. 20, §20.5.3, p. 256–258.
+
+**Complemento técnico:** os descritores VirtIO e as regras de endereçamento DMA são detalhados no driver oficial do xv6 e na documentação do Linux, listados ao final.
+
+### Desafios da fase 5.1
+
+1. **Qual trabalho a CPU deixa de fazer diretamente quando se usa DMA?** → Copiar cada unidade de dados durante a transferência.
+2. **Uma requisição usa DMA. O que podemos afirmar sobre sua conclusão?** → Pode ser detectada por interrupção ou consulta, conforme o dispositivo e o driver.
+3. **Ordenar o fluxo:** Driver prepara o buffer e os descritores → Driver disponibiliza a requisição ao dispositivo → Dispositivo transfere os dados → Driver verifica a conclusão e libera o uso do resultado.
+
+### Conexão com xv6 e Linux
+
+**DMA com descritores VirtIO** — `kernel/virtio_disk.c`. Esquema didático, não código C executável. Consulte virtio_disk_rw() e virtio_disk_intr(). O exemplo é VirtIO em QEMU, não um disco NVMe.
+
+
+---
+
+## Fase 5.2 — IRQ — Interrupção de hardware
+
+### Conceito e funcionamento
 
 Notificação de hardware que solicita atenção da CPU para um evento assíncrono.
 
@@ -18,7 +60,26 @@ A notificação pode usar uma linha física ou uma mensagem, dependendo da arqui
 
 Exemplo: Uma entrada na UART ou a conclusão de uma operação VirtIO pode provocar uma interrupção externa no xv6.
 
-## 5.3 — Device driver
+> **Referência de estudo:** Maziero, cap. 19, §19.6, p. 243–247; cap. 20, §§20.5.2 e 20.6, p. 254–256 e 258–260.
+
+**Complemento técnico:** APIC, PLIC e os caminhos de entrada do xv6 são exemplos de arquiteturas específicas. Consulte `trap.c` e `plic.c` para o caso RISC-V.
+
+### Desafios da fase 5.2
+
+1. **Uma interrupção chega enquanto a CPU já executa código do kernel. Ela precisa vir do modo usuário?** → Não; interrupções também podem ocorrer no kernel quando habilitadas.
+2. **Qual é a diferença entre DMA e interrupção?** → DMA transfere dados; uma interrupção notifica um evento.
+3. **Ordenar o fluxo:** Dispositivo sinaliza um evento → Controlador encaminha a interrupção habilitada → Código de entrada salva o contexto necessário → Tratador identifica e atende o evento → Kernel conclui o atendimento e pode retomar a execução.
+
+### Conexão com xv6 e Linux
+
+**Interrupções externas no xv6** — `kernel/trap.c e kernel/plic.c`. Esquema do caminho de interrupções externas. O PLIC não é o encaminhador de todas as classes de interrupção, como temporizadores. Um processo acordado pode voltar a ficar pronto e aguardar escalonamento.
+
+
+---
+
+## Fase 5.3 — Device driver
+
+### Conceito e funcionamento
 
 Componente de software que controla um dispositivo e adapta suas operações às interfaces do sistema.
 
@@ -26,7 +87,24 @@ Um driver conhece registradores, filas, formatos de comandos e regras do disposi
 
 Exemplo: kernel/virtio_disk.c controla o disco VirtIO; kernel/uart.c controla a UART no xv6.
 
-## 5.4 — /dev — Arquivos especiais de dispositivo
+> **Referência de estudo:** Maziero, cap. 20, §§20.2–20.4, p. 248–252.
+
+### Desafios da fase 5.3
+
+1. **Qual tarefa pertence ao driver de um dispositivo?** → Traduzir uma operação do SO para comandos específicos do dispositivo.
+2. **Qual afirmação sobre drivers Linux é correta?** → Podem estar integrados ao kernel ou ser módulos carregáveis.
+3. **Associar:** Driver → Conhece comandos e registradores do dispositivo; Controlador → Implementa a interface do dispositivo em hardware ou emulação; Aplicação → Solicita operações usando interfaces do SO.
+
+### Conexão com xv6 e Linux
+
+**Disco e console têm caminhos diferentes** — `kernel/virtio_disk.c, kernel/uart.c e kernel/console.c`. Esquema didático. O disco do xv6 é acessado internamente pelo sistema de arquivos; não suponha que todo driver apareça como um arquivo em /dev.
+
+
+---
+
+## Fase 5.4 — /dev — Arquivos especiais de dispositivo
+
+### Conceito e funcionamento
 
 Diretório que reúne muitos nós de dispositivo em sistemas Unix/Linux, incluindo dispositivos virtuais.
 
@@ -34,7 +112,28 @@ Nós especiais de bloco (b) e de caractere (c) têm números major e minor que i
 
 Exemplo: /dev/sda: exemplo de disco; /dev/ttyS0: exemplo de porta serial; /dev/null: descarte de dados. A existência e os números variam conforme o sistema.
 
-## 5.5 — ioctl — Input/Output Control
+> **Referência de estudo:** Maziero, cap. 20, §20.3, p. 249–251; cap. 22, §22.4, p. 294–295.
+
+**Complemento técnico:** nomes de dispositivos, major/minor e a organização concreta de `/dev` devem ser conferidos no manual do sistema utilizado.
+
+### Desafios da fase 5.4
+
+1. **O que /dev/null demonstra?** → Um dispositivo também pode ser virtual.
+2. **Em uma saída de ls -l, como reconhecer um nó especial de caractere?** → Pela letra c no início do modo.
+3. **Associar:** b → Nó de dispositivo de bloco; c → Nó de dispositivo de caractere; major/minor → Identificação de dispositivo interpretada pelo sistema; /dev/null → Dispositivo virtual que descarta dados escritos.
+
+### Conexão com xv6 e Linux
+
+**O nó console do xv6** — `kernel/sysfile.c e kernel/file.c`. Esquema didático. O xv6 possui sua própria interface mknod e nós de dispositivo, mas não implementa a árvore /dev completa do Linux. Não execute exemplos de criação de nós no computador real para esta atividade.
+
+No Linux, a atividade usa `ls -l /dev/null`. Saída ilustrativa, não capturada nesta atividade. O c identifica um nó de caractere; 1 e 3 são major e minor neste exemplo. Permissões e outros campos podem variar.
+
+
+---
+
+## Fase 5.5 — ioctl — Input/Output Control
+
+### Conceito e funcionamento
 
 Chamada de sistema usada para operações de controle específicas sobre um descritor aberto.
 
@@ -42,7 +141,26 @@ Recebe um descritor, um código de operação e, quando necessário, argumentos 
 
 Exemplo: TIOCGWINSZ permite consultar as dimensões de um terminal em sistemas que oferecem essa operação.
 
-## 5.6 — Buffers, cache e double buffering
+> **Referência de estudo:** Maziero, cap. 20, §20.4, p. 251–252.
+
+**Complemento técnico:** a assinatura de `ioctl`, `TIOCGWINSZ` e seus erros são consultados no manual Linux. O xv6 padrão não oferece essa chamada.
+
+### Desafios da fase 5.5
+
+1. **Qual situação combina com ioctl?** → Consultar dimensões de um terminal por uma operação suportada.
+2. **Podemos chamar ioctl no xv6 padrão como se fosse Linux?** → Não; o xv6 padrão não implementa essa chamada.
+3. **Associar:** read → Obtém bytes por uma interface de leitura; write → Envia bytes por uma interface de escrita; ioctl → Solicita uma operação de controle suportada.
+
+### Conexão com xv6 e Linux
+
+**Limite da comparação com Linux** — `kernel/syscall.h`. Comparação de interfaces, não código executado. O xv6 padrão não tem ioctl; a ausência é parte do conteúdo desta etapa.
+
+
+---
+
+## Fase 5.6 — Buffers, cache e double buffering
+
+### Conceito e funcionamento
 
 Buffers intermedeiam transferências; caches reaproveitam dados; double buffering alterna dois buffers.
 
@@ -50,28 +168,45 @@ Um buffer armazena dados temporariamente para acomodar transferências e diferen
 
 Exemplo: Em bio.c, bread() obtém um buffer e só solicita leitura ao disco se o bloco ainda não estiver válido no cache.
 
+> **Referência de estudo:** Maziero, apoio: cap. 20, §20.5.2, p. 254–256; cache e double buffering: complemento técnico.
+
+**Complemento técnico:** a implementação de `bcache` é documentada por `kernel/bio.c` do xv6. A distinção entre cache e alternância de dois buffers integra a explicação didática do jogo; não se atribui a Maziero uma seção de double buffering não identificada na consulta.
+
+### Desafios da fase 5.6
+
+1. **Qual situação mostra benefício de um cache de blocos?** → Reutilizar um bloco válido em RAM sem fazer nova leitura ao disco.
+2. **Qual afirmação diferencia double buffering de buffer cache?** → Double buffering alterna dois buffers; cache busca reutilizar dados.
+3. **Associar:** Buffer → Armazenamento intermediário temporário; Cache → Reutilização de dados já disponíveis; Double buffering → Alternância entre dois buffers; bcache do xv6 → Cache de blocos do sistema de arquivos.
+
+### Conexão com xv6 e Linux
+
+**Cache de blocos e espera por E/S** — `kernel/bio.c e kernel/virtio_disk.c`. Esquema didático. Na espera pelo disco, o processo pode dormir; a conclusão acorda quem espera. Acordar o processo o torna elegível para execução, sem garantir execução imediata. Este cache é distinto do page cache de sistemas como Linux.
+
+
+---
+
 ## Relação com processos e threads
 
 Uma tarefa que solicita E/S pode ficar bloqueada enquanto outra usa a CPU. A conclusão pode acordar a tarefa, que ainda depende do escalonador para executar. Buffers compartilhados exigem coordenação; interrupções e DMA não substituem essa sincronização.
 
-## Revisão do material recebido
+## Referências
 
-- DMA não elimina a CPU: configuração, endereçamento apropriado e conclusão continuam necessários. Não há regra de exatamente uma interrupção por transferência, nem exigência universal de um controlador tomar um barramento compartilhado.
-- Interrupções podem usar linhas ou mensagens e chegar durante execução do kernel. Hardware e código de entrada dividem o salvamento de contexto; nem sempre ocorre mudança de modo.
-- Drivers podem ser integrados ou modulares, com interfaces diferentes.
-- /dev inclui dispositivos virtuais. O xv6 não replica a árvore /dev do Linux.
-- ioctl é uma interface Unix/Linux, ausente no xv6 padrão.
-- Buffer, buffer cache e double buffering foram distinguidos. O bcache do xv6 é um cache de blocos, não um exemplo automático de double buffering.
+### Livro-base
 
-## Referências para conferir os mecanismos
+MAZIERO, Carlos A. *Sistemas Operacionais: Conceitos e Mecanismos*. Curitiba: DINF/UFPR, 2019. ISBN 978-85-7335-340-2. Versão digital compilada em 26 jun. 2026. Acesso em: 18 nov. 2026.
 
-- DMA e endereços de dispositivo: https://www.kernel.org/doc/html/latest/core-api/dma-api-howto.html
-- Driver VirtIO e descritores: https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/virtio_disk.c
-- Entrada e encaminhamento de interrupções: https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/trap.c
-- PLIC: https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/plic.c
-- Cache de blocos: https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/bio.c
-- Arquivos especiais Linux: https://man7.org/linux/man-pages/man4/intro.4.html
-- Identificação por major e minor: https://man7.org/linux/man-pages/man2/mknod.2.html
-- ioctl: https://man7.org/linux/man-pages/man2/ioctl.2.html
+- [Página oficial do livro e dos capítulos](https://wiki.inf.ufpr.br/maziero/doku.php?id=socm:start).
+- [Livro completo — versão consultada](https://wiki.inf.ufpr.br/maziero/lib/exe/fetch.php?media=socm:socm-livro.pdf).
+- [Capítulo 19 — Hardware de entrada/saída](https://wiki.inf.ufpr.br/maziero/lib/exe/fetch.php?media=socm:socm-texto-19.pdf).
+- [Capítulo 20 — Software de entrada/saída](https://wiki.inf.ufpr.br/maziero/lib/exe/fetch.php?media=socm:socm-texto-20.pdf).
+- [Capítulo 22 — O conceito de arquivo](https://wiki.inf.ufpr.br/maziero/lib/exe/fetch.php?media=socm:socm-texto-22.pdf), §22.4 como leitura de apoio.
+
+Os resumos e desafios são formulações didáticas do KernelPlay. A obra de Maziero é disponibilizada pelo autor sob [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/).
+
+### Complementos de implementação
+
+- LINUX KERNEL. [Dynamic DMA mapping Guide](https://www.kernel.org/doc/html/latest/core-api/dma-api-howto.html): endereços e preparação de memória para DMA.
+- MIT PDOS. xv6 RISC-V: [driver VirtIO](https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/virtio_disk.c), [tratamento de traps](https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/trap.c), [PLIC](https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/plic.c) e [cache de blocos](https://github.com/mit-pdos/xv6-riscv/blob/riscv/kernel/bio.c).
+- LINUX MAN-PAGES. [Arquivos especiais](https://man7.org/linux/man-pages/man4/intro.4.html), [mknod e identificação de dispositivos](https://man7.org/linux/man-pages/man2/mknod.2.html) e [ioctl](https://man7.org/linux/man-pages/man2/ioctl.2.html).
 
 Os caminhos xv6 referem-se à árvore oficial RISC-V. Confira a versão usada na disciplina antes de reproduzir experimentos. Os esquemas e a saída Linux são ilustrativos; não comprovam testes reais do grupo.
