@@ -12,7 +12,7 @@
      titulo, descricao, icone, chefe? (true na última etapa, o "desafio final")
      etapa     rótulo curto mostrado na trilha (ex.: "1.1", "BIOS")
      desafios  lista de desafios (tipos abaixo)
-     xv6?      { titulo, arquivo, codigo, texto }   → cartão "Veja no xv6"
+     xv6?      { titulo, arquivo, codigo, texto, nota? }   → cartão "Veja no xv6"
      linux?    { titulo, comando, saida, texto }    → cartão "E no Linux?"
      man?      [{ termo, secao, resumo, detalhe?, exemplo?, veja?[] }]
                → páginas do manual, liberadas quando a etapa é concluída
@@ -47,6 +47,4 @@ const TRILHAS = [];
 
 // Trilhas que ainda não têm conteúdo: aparecem no menu como "[em breve]".
 // Quando uma trilha com o mesmo número for criada, ela substitui o aviso.
-const TRILHAS_PREVISTAS = [
-  { numero: 5, titulo: "Dispositivos e Entrada/Saída" }
-];
+const TRILHAS_PREVISTAS = [];

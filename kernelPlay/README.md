@@ -18,7 +18,8 @@ kernelPlay/
 │   │   ├── trilha-1-introducao.js   ← 3 etapas (1.1 a 1.3)
 │   │   ├── trilha-2-processos.js    ← 9 etapas (2.1 A, B e C; 2.2 a 2.7)
 │   │   ├── trilha-3-memoria.js      ← 6 etapas (3.1 A e B; 3.2; 3.3; 3.4 A e B)
-│   │   └── trilha-4-arquivos.js     ← 5 etapas (4.1; 4.2; 4.3 A e B; 4.4)
+│   │   ├── trilha-4-arquivos.js     ← 5 etapas (4.1; 4.2; 4.3 A e B; 4.4)
+│   │   └── trilha-5-dispositivos.js ← 6 etapas (5.1 a 5.6)
 │   ├── simulador.js       ← máquina de estados dos processos
 │   ├── shell.js           ← bash simulado COM estado (arquivos, i-nodes, links, permissões, processos e sinais)
 │   ├── laboratorio.js     ← modo Laboratório: geradores de exercícios e roteiros
@@ -47,6 +48,10 @@ As imagens originais e a proposta visual ficam em `../design/`, fora do jogo.
 - **Aulas de laboratório**: desafios marcados com 🧪 (LAB 01 a LAB 04 · xv6) usam os comandos, códigos e resultados das aulas práticas: `ps`, `pstree`, `fork`, threads, os programas de escalonamento e sincronização em C, os experimentos em Java do Lab 03 e os exercícios do xv6.
 - **Estados de processo**: o jogo usa os nomes da aula (Novo, Pronto, Executando, Bloqueado, Zumbi, Finalizado) e mostra ao lado o nome do xv6 (RUNNABLE, RUNNING, SLEEPING, ZOMBIE, UNUSED).
 - **Trechos do xv6**: seguem o xv6-labs-2024, a versão usada no laboratório.
+
+## Trilha 5 — Dispositivos e Entrada/Saída
+
+Seis etapas e 24 desafios sobre DMA, interrupções, drivers, arquivos de dispositivo, ioctl e buffers. Inclui sete páginas no manual e cartões de comparação com xv6. Consulte [o conteúdo revisado e as referências](../docs/trilhas/Trilha_5_Dispositivos_e_Entrada_Saida.md). Os cartões usam esquemas didáticos e não substituem a demonstração prática do grupo.
 
 ## Laboratório
 Entrada própria no menu de trilhas (**🧪 Laboratório**). Erros não custam estabilidade e não travam etapas; o progresso das trilhas não muda.

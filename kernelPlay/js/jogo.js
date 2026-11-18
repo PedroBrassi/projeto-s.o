@@ -1113,7 +1113,7 @@
         <p class="ponte-texto">${c.texto}</p>
       </div>`;
     $("#rodape").className = "rodape";
-    $("#rodape").innerHTML = `<span class="ponte-dica">${ehXv6 ? "Trechos resumidos do xv6-labs-2024, a versão usada no laboratório." : "Mesmo conceito, num SO usado no dia a dia."}</span>
+    $("#rodape").innerHTML = `<span class="ponte-dica">${c.nota ? esc(c.nota) : (ehXv6 ? "Trechos resumidos do xv6-labs-2024, a versão usada no laboratório." : "Mesmo conceito, num SO usado no dia a dia.")}</span>
       <button class="btn" id="continuar">${passo + 1 < cartoes.length ? "Próximo" : "Concluir etapa"}</button>`;
     $("#continuar").addEventListener("click", () => renderPonte(passo + 1));
     $("#continuar").focus();
