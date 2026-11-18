@@ -19,7 +19,7 @@ kernelPlay/
 │   │   ├── trilha-2-processos.js    ← 9 etapas (2.1 A, B e C; 2.2 a 2.7)
 │   │   ├── trilha-3-memoria.js      ← 6 etapas (3.1 A e B; 3.2; 3.3; 3.4 A e B)
 │   │   ├── trilha-4-arquivos.js     ← 5 etapas (4.1; 4.2; 4.3 A e B; 4.4)
-│   │   └── trilha-5-dispositivos.js ← 6 etapas (5.1 a 5.6)
+│   │   └── trilha-5-dispositivos.js ← 9 etapas (5.1 a 5.9)
 │   ├── simulador.js       ← máquina de estados dos processos
 │   ├── shell.js           ← bash simulado COM estado (arquivos, i-nodes, links, permissões, processos e sinais)
 │   ├── laboratorio.js     ← modo Laboratório: geradores de exercícios e roteiros
@@ -51,7 +51,7 @@ As imagens originais e a proposta visual ficam em `../design/`, fora do jogo.
 
 ## Trilha 5 — Dispositivos e Entrada/Saída
 
-Seis etapas e 24 desafios sobre DMA, interrupções, drivers, arquivos de dispositivo, ioctl e buffers. Inclui sete páginas no manual e cartões de comparação com xv6. Consulte [o conteúdo revisado e as referências](../docs/trilhas/Trilha_5_Dispositivos_e_Entrada_Saida.md). Os cartões usam esquemas didáticos e não substituem a demonstração prática do grupo.
+Nove etapas e 72 desafios organizados a partir dos capítulos 19–21 do Maziero: hardware e interfaces, interrupções, drivers, classes de dispositivos, estratégias de E/S, DMA e armazenamento. Buffers, cache e coordenação compõem um aprofundamento técnico identificado. Inclui 27 páginas no manual, terminal simulado, simulação de estados de processos e cartões de conexão com xv6/Linux. Consulte [o conteúdo revisado e as referências](../docs/trilhas/Trilha_5_Dispositivos_e_Entrada_Saida.md). Os cartões usam esquemas didáticos e não substituem a demonstração prática do grupo. As etapas revisadas usam IDs es-v2-*, iniciando um novo progresso na trilha 5 sem alterar os IDs das trilhas 1–4.
 
 ## Laboratório
 Entrada própria no menu de trilhas (**🧪 Laboratório**). Erros não custam estabilidade e não travam etapas; o progresso das trilhas não muda.
