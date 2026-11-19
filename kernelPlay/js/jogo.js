@@ -34,6 +34,11 @@
 
   // ---------- Estado da lição em andamento ----------
   let licao = null;
+  let escalonadorAtivo = null;
+  function pararEscalonador() {
+    if (escalonadorAtivo) escalonadorAtivo.destruir();
+    escalonadorAtivo = null;
+  }
 
   const app = document.getElementById("app");
   const topo = () => window.scrollTo(0, 0);
@@ -161,6 +166,7 @@
   // Tela 0 — Abertura
   // =========================================================
   function renderAbertura() {
+    pararEscalonador();
     licao = null;
     topo();
     const linhas = [
@@ -205,6 +211,7 @@
   }
 
   function renderGrub() {
+    pararEscalonador();
     licao = null;
     topo();
     const reais = TRILHAS.map((t, i) => ({ t, i }));
@@ -226,6 +233,10 @@
         <li><button class="grub-item lab" data-lab>
           <span class="grub-nome">🧪 Laboratório · treino livre e roteiros</span>
           <span class="grub-info">sem perder estabilidade</span>
+        </button></li>` : "") + (typeof JogoEscalonador !== "undefined" ? `
+        <li><button class="grub-item esc" data-escalonador>
+          <span class="grub-nome">⚡ Seja o Escalonador · processos e threads</span>
+          <span class="grub-info">minigame com dois núcleos</span>
         </button></li>` : "");
 
     app.innerHTML = `
@@ -241,7 +252,11 @@
     const botoes = Array.from(app.querySelectorAll(".grub-item:not(.breve)"));
     const abrir = (i) => { trilhaIdx = i; estado.trilha = i; salvar(); renderMapa(); };
     botoes.forEach(b => {
-      b.addEventListener("click", () => (b.dataset.lab !== undefined ? renderLab() : abrir(Number(b.dataset.trilha))));
+      b.addEventListener("click", () => {
+        if (b.dataset.lab !== undefined) return renderLab();
+        if (b.dataset.escalonador !== undefined) return renderEscalonador();
+        abrir(Number(b.dataset.trilha));
+      });
       b.addEventListener("focus", () => { botoes.forEach(x => x.classList.remove("sel")); b.classList.add("sel"); });
     });
     const atual = botoes.find(b => Number(b.dataset.trilha) === trilhaIdx) || botoes[0];
@@ -257,6 +272,7 @@
   // Tela 1 — Trilha (sequência de boot)
   // =========================================================
   function renderMapa() {
+    pararEscalonador();
     licao = null;
     topo();
     const STATUS = { concluida: "[  OK  ]", liberada: "[ .... ]", bloqueada: "[ LOCK ]" };
@@ -1168,7 +1184,33 @@
     return estado.lab;
   }
 
+  function renderEscalonador() {
+    pararEscalonador();
+    licao = null;
+    topo();
+    app.innerHTML = `${hud()}
+      <main class="esc-tela">
+        <section class="unidade"><div>
+          <button class="trocar" id="trocar-trilha">◂ trilhas</button>
+          <small>$ sched --interactive</small><h1>Seja o Escalonador</h1>
+          <p>Gerencie dois núcleos de CPU e compare processos e threads nos modelos 1:1 e N:1.</p>
+        </div>${mascote("acerto", "un-mascote")}</section>
+        <div id="minigame-escalonador"></div>
+      </main>`;
+    ligarHud();
+    $("#trocar-trilha").addEventListener("click", renderGrub);
+    escalonadorAtivo = new JogoEscalonador("minigame-escalonador", (res) => {
+      if (res.ciclos > 0) {
+        estado.ciclos += res.ciclos;
+        salvar();
+        const stat = app.querySelector(".hud .stat");
+        if (stat) stat.innerHTML = `⚡ ${estado.ciclos}<small> ciclos</small>`;
+      }
+    });
+  }
+
   function renderLab() {
+    pararEscalonador();
     licao = null;
     topo();
     const reg = registroLab();
@@ -1430,6 +1472,7 @@ Call Trace:
   }
 
   function renderMan() {
+    pararEscalonador();
     licao = null;
     topo();
     let total = 0, abertas = 0;
