@@ -31,7 +31,7 @@ Os resultados dos dois modelos ficam visíveis enquanto a tela do minigame estiv
 
 ## Referência e limites
 
-MAZIERO, Carlos A. *Sistemas Operacionais: Conceitos e Mecanismos*. Capítulo 5, Threads, seção 5.4, modelos de implementação. [Texto do autor](https://wiki.inf.ufpr.br/maziero/lib/exe/fetch.php?media=socm:socm-texto-05.pdf).
+MAZIERO, Carlos A. *Sistemas Operacionais: Conceitos e Mecanismos*. Capítulo 5, Implementação de tarefas, seção 5.4 Threads, especialmente 5.4.2 Modelos de threads. [Texto do autor](https://wiki.inf.ufpr.br/maziero/lib/exe/fetch.php?media=socm:socm-texto-05.pdf).
 
 O minigame ilustra os conceitos; não implementa threads reais, drivers, xv6 ou o escalonador de um SO. Cada passo avança um segundo simulado; atrasos do navegador podem aumentar a duração real da rodada.
 

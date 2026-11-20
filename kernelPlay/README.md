@@ -23,6 +23,7 @@ kernelPlay/
 │   ├── simulador.js       ← máquina de estados dos processos
 │   ├── shell.js           ← bash simulado COM estado (arquivos, i-nodes, links, permissões, processos e sinais)
 │   ├── laboratorio.js     ← modo Laboratório: geradores de exercícios e roteiros
+│   ├── escalonador.js     ← minigame de processos e threads em dois núcleos
 │   └── jogo.js            ← motor: telas, estabilidade, ciclos, uptime, mascote
 └── assets/
     ├── mascote/           ← 6 poses recortadas (.webp, ~40 KB cada)
@@ -75,6 +76,14 @@ As explicações mostram a conta completa (por exemplo, o diagrama de Gantt e a 
 - **Processos e sinais** (14 passos): `ps`, `echo $$`, `sleep 1000 &`, `ps aux`, `grep`, `pstree -p`, `kill -STOP`/`-CONT`, SIGTERM, `yes > /dev/null &` em estado R e `kill -9`.
 
 Para criar um roteiro novo, acrescente um objeto em `roteiros` no `js/laboratorio.js` (o formato está comentado no topo do arquivo). Para um treino novo, escreva uma função que devolva um desafio `multipla` ou `substituicao` e registre-a em `treinos`.
+
+## Seja o Escalonador
+
+Minigame finalizado, acessível pelo menu de trilhas. O jogador gerencia dois núcleos e compara threads 1:1 e N:1 no mesmo cenário de 60 segundos simulados. Inclui pausa, E/S bloqueante, preempção manual e métricas de espera, resposta e utilização. Não há quantum ou política automática no minigame; os algoritmos FCFS, SJF, SRTF e Round-Robin são calculados no treino de escalonamento do Laboratório.
+
+As regras e a interface ficam em `js/escalonador.js`, carregado antes de `jogo.js`. Execute `node tests/escalonador.cjs` na raiz do repositório para conferir as nove verificações das regras.
+
+Consulte as [regras e limitações](../docs/Minigame_Escalonador.md), a [documentação do desenvolvimento](../docs/desenvolvimento/documentacao-desenvolvimento.md) e a [justificativa técnica](../docs/justificativa/README.md).
 
 ## Modo apresentação
 Abra o jogo com `?apresentacao` no fim do endereço, por exemplo `kernelPlay/index.html?apresentacao` ou `https://pedrobrassi.github.io/projeto-s.o/kernelPlay/?apresentacao`.

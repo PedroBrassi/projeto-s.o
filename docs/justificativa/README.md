@@ -1,9 +1,11 @@
-# Justificativa técnica — pendente
+# Justificativa técnica do KernelPlay
 
-Esta pasta receberá o texto editável e o PDF final. Este README é apenas orientação e não substitui a entrega.
+Documento produzido em 19/11/2026 com base no código da versão `9989806`. Aborda os conceitos e algoritmos, a lógica e as estruturas de dados, as decisões técnicas e as simplificações diante de um SO real.
 
-Sugestão de conteúdo: objetivo educativo; relação com processos e threads; funcionamento e instruções do KernelPlay; tecnologias utilizadas; decisões técnicas; limitações; referências.
+- [PDF para leitura e entrega](justificativa-tecnica.pdf)
+- [Versão editável em Word](justificativa-tecnica.docx)
+- [Fonte em Markdown](justificativa-tecnica.md)
 
-Nomes sugeridos: `justificativa-tecnica.md` (ou outro formato editável) e `justificativa-tecnica.pdf`.
+O minigame Seja o Escalonador está finalizado no escopo implementado. A justificativa está gerada; faltam a revisão conjunta do grupo e a publicação do PDF no post correspondente da coluna Simulador do Padlet. A demonstração real no xv6 e os slides continuam sendo entregas independentes.
 
-Após revisão do grupo, anexar o PDF ao post de justificativa da coluna Simulador no Padlet.
+Consulte também a [documentação do desenvolvimento da plataforma](../desenvolvimento/documentacao-desenvolvimento.md).

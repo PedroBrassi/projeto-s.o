@@ -32,12 +32,18 @@ projeto-s.o/
 | Entrega | Situação | Local |
 |---|---|---|
 | KernelPlay | Implementado e publicado; revisão funcional conjunta pendente | [Site e documentação](kernelPlay/README.md) |
-| Justificativa técnica | PDF pendente | [Orientações](docs/justificativa/README.md) |
+| Justificativa técnica | Word, Markdown e PDF gerados; revisão do grupo e publicação no Padlet pendentes | [Documentos](docs/justificativa/README.md) |
 | Demonstração no xv6 | Implementação, execução e testes pendentes | [Roteiro de entrega](xv6-demo/README.md) |
 | SO atual | Slides em PDF pendentes; Linux é a referência prevista na documentação existente | [Orientações](apresentacao/README.md) |
 | Padlet | Identificação, quatro colunas, link do simulador e modelo de avaliações preparados | Link acima |
 
 O conteúdo didático sobre xv6 dentro do jogo não comprova a execução da demonstração prática.
+
+## Documentação da plataforma
+
+- [Desenvolvimento completo em Markdown](docs/desenvolvimento/documentacao-desenvolvimento.md), [Word](docs/desenvolvimento/documentacao-desenvolvimento.docx) e [PDF](docs/desenvolvimento/documentacao-desenvolvimento.pdf): arquitetura, conteúdo, algoritmos, decisões, histórico, validação e manutenção.
+- [Justificativa técnica](docs/justificativa/README.md): os quatro pontos da entrega, com enfoque em Processos e Threads.
+- [Seja o Escalonador](docs/Minigame_Escalonador.md): minigame finalizado e integrado à versão `9989806`.
 
 ## Executar o site
 
