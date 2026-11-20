@@ -9,3 +9,6 @@ desktop.ini
 *.zip
 *.tmp
 *~
+
+# Ambiente local do xv6 (kit do professor, codigo-fonte completo e binarios)
+xv6-desenvolvimento/
