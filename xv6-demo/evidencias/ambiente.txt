@@ -1,0 +1,19 @@
+Gerado em: 2026-11-23 07:50 -03
+
+== Windows ==
+Microsoft Windows 11 Home Single Language 10.0.26300
+== WSL ==
+PRETTY_NAME="Ubuntu 24.04.5 LTS"
+kernel: 6.18.58.1-microsoft-standard-WSL2
+== Docker ==
+Docker version 29.10.0, build fdd4b8e
+imagem so-xv6:2024  id=sha256:76d830f56c1aadfa4efc3bc5cf3dad57c78188f7f80e49fb6aa4e7b4a285ea86  criada=2026-09-28T09:16:39.09203827-03:00
+== Ferramentas dentro da imagem ==
+QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)
+riscv64-linux-gnu-gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+== Base do xv6 ==
+origem: git://g.csail.mit.edu/xv6-labs-2024 (copia embutida na imagem: /opt/xv6-labs-2024.git)
+branch util: 79e8024d61c3dd92ccf064fc67bb99cb999f70ab
+== Esqueleto Uthread ==
+origem: git://g.csail.mit.edu/xv6-labs-2023, branch thread
+commit: 0d65be5d1d880afafbf08c2adb605cf9f72216e2
