@@ -16,12 +16,12 @@ projeto-s.o/
 ├── index.html                 # entrada do site; redireciona para kernelPlay/
 ├── kernelPlay/                # site publicado: HTML, CSS, JS e imagens
 ├── docs/
-│   ├── planejamento.md        # entregas, responsáveis, prazos e situação
+│   ├── planejamento.md        # entregas, responsáveis e prazos a combinar
 │   ├── trilhas/               # material educativo em Markdown
 │   └── justificativa/         # texto editável e PDF final, quando concluídos
-├── xv6-demo/                  # demonstração real no xv6: README, código, patch e evidências
-│   ├── codigo/                # proc_demo.c, uthread.c, uthread_switch.S, integracao.patch
-│   └── evidencias/            # ambiente, comandos e resultados, logs e capturas
+├── xv6-demo/                  # código, instruções e evidências da demonstração
+│   ├── codigo/
+│   └── evidencias/
 ├── apresentacao/              # fontes editáveis e PDF sobre SO atual
 ├── design/                    # proposta visual e imagens originais
 └── CONTRIBUTING.md            # como colaborar
@@ -33,13 +33,11 @@ projeto-s.o/
 |---|---|---|
 | KernelPlay | Implementado e publicado; revisão funcional conjunta pendente | [Site e documentação](kernelPlay/README.md) |
 | Justificativa técnica | Word, Markdown e PDF gerados; revisão do grupo e publicação no Padlet pendentes | [Documentos](docs/justificativa/README.md) |
-| Demonstração no xv6 | Processos (`fork`/`wait`/`exit`) e threads de usuário (`uthread`, modelo N:1) implementados e executados no `xv6-labs-2024` (`util@79e8024`), com patch reproduzido em cópia limpa; reprodução por outro integrante e publicação no Padlet pendentes | [Roteiro, código e evidências](xv6-demo/README.md) |
-| SO atual | Slides pendentes (versão editável + PDF previstas para 23/11); Linux é a referência prevista na documentação existente | [Orientações](apresentacao/README.md) |
+| Demonstração no xv6 | Implementação, execução e testes pendentes | [Roteiro de entrega](xv6-demo/README.md) |
+| SO atual | Slides em PDF pendentes; Linux é a referência prevista na documentação existente | [Orientações](apresentacao/README.md) |
 | Padlet | Identificação, quatro colunas, link do simulador e modelo de avaliações preparados | Link acima |
 
-O conteúdo didático sobre xv6 dentro do jogo não comprova a execução da demonstração prática; as evidências reais estão em [`xv6-demo/evidencias/`](xv6-demo/evidencias/comandos-e-resultados.md).
-
-Cronograma, responsáveis e situação detalhada: [planejamento](docs/planejamento.md). Entrega oficial: 25/11/2026.
+O conteúdo didático sobre xv6 dentro do jogo não comprova a execução da demonstração prática.
 
 ## Documentação da plataforma
 
