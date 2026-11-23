@@ -2,7 +2,6 @@
 
 > **Origem:** pasta `Gerenciamento de processos` (Aulas 4, 5, 7, 8, 9, 10 e 11 — Prof. Romário da Silva Borges, UNIFAL-MG)
 > **Livro de referência:** MAZIERO, Carlos A. *Sistemas Operacionais: Conceitos e Mecanismos*. DINF/UFPR, 2019 — Parte II "Gestão de tarefas" (caps. 4–7, p. 39–90) e Parte III "Interação entre tarefas" (caps. 8–13, p. 91–159).
-> Obs.: a pasta não contém a Aula 6. Como a Aula 8 (Monitores) parte dos **semáforos**, incluí na Fase 2.4 um bloco-ponte marcado como *complemento do livro* (cap. 11).
 
 | Fase | Aula | Tema | Livro (Maziero) |
 |---|---|---|---|
