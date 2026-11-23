@@ -1,29 +1,27 @@
 # Planejamento do grupo
 
-Tema: **Processos e Threads**. Meta interna: tudo pronto até **24/11/2026**. Entrega oficial: **25/11/2026**, conforme as orientações do professor.
+Tema: **Processos e Threads**.
 
-Os prazos são os do cronograma combinado no grupo e podem ser ajustados conforme a disponibilidade de cada um. Avise no grupo ao entregar cada etapa e, se houver risco de atraso, avise antes para redistribuirmos as tarefas.
+Avise no grupo ao entregar cada etapa e, se houver dificuldade, avise antes para redistribuirmos as tarefas.
 
 Situação atualizada em 23/11/2026, com base no conteúdo do repositório.
 
 ## Entregas
 
-| # | Entrega | Responsável | Prazos | Pasta | Situação |
-|---|---|---|---|---|---|
-| 1 | Justificativa técnica do simulador KernelPlay (PDF) | Pedro Brassi Luccas | Primeira versão: 20/11 · Editável + PDF: 22/11 | `docs/justificativa/` | Entregue: Markdown, Word e PDF gerados; revisão (parte 5) e publicação no Padlet pendentes |
-| 2 | Implementação da demonstração no xv6 | Aurélio Junior e Pedro Brassi Luccas | Definir experimento: 19/11 · Código + instruções: 21/11 · Correções dos testes: 23/11 | `xv6-demo/codigo/` e `xv6-demo/README.md` | Entregue: processos (`proc_demo`) e threads de usuário (`uthread`), patch de integração, README e reprodução em cópia limpa; corrige apenas o que os testes apontarem |
-| 3 | Execução dos testes e registro dos comandos e resultados | Gabriel Alves Domingos | Definir testes: 19/11 · Primeira rodada: 22/11 · Registro final: 23/11 | `xv6-demo/evidencias/` | Há o registro da execução feita na implementação; reprodução independente pendente (ver abaixo) |
-| 4 | Slides sobre processos e threads em um SO atual (Linux) | Pedro Lima | Primeira versão: 21/11 · Editável + PDF: 23/11 · Ajustes com os resultados do xv6: 24/11 | `apresentacao/` | Primeira versão no Canva (15 slides); correções e envio ao repositório pendentes (ver abaixo) |
-| 5 | Revisão final e publicação dos materiais no Padlet | Ana Flávia dos Santos Peixoto | Sugestões sobre justificativa e slides: 22/11 · Conferência geral: 24/11 · Publicação: 24/11 · Encerramento conjunto: 24/11 | Padlet | Pendente (ver abaixo) |
-| 6 | Apresentação do trabalho no dia | Guilherme Gouvêa da Silva e Victor Orlando Avelar (disponibilidade a confirmar) | Confirmar disponibilidade: 23/11 · Ensaio na conferência conjunta: 24/11 · Apresentação: data definida pelo professor | — | Pendente (ver abaixo) |
-
-**25/11:** envio oficial do trabalho.
+| # | Entrega | Responsável | Pasta | Situação |
+|---|---|---|---|---|
+| 1 | Justificativa técnica do simulador KernelPlay (PDF) | Pedro Brassi Luccas | `docs/justificativa/` | Entregue: Markdown, Word e PDF gerados; revisão (parte 5) e publicação no Padlet pendentes |
+| 2 | Implementação da demonstração no xv6 | Aurélio Junior e Pedro Brassi Luccas | `xv6-demo/codigo/` e `xv6-demo/README.md` | Entregue: processos (`proc_demo`) e threads de usuário (`uthread`), patch de integração, README e reprodução em cópia limpa; corrige apenas o que os testes apontarem |
+| 3 | Execução dos testes e registro dos comandos e resultados | Gabriel Alves Domingos | `xv6-demo/evidencias/` | Há o registro da execução feita na implementação; reprodução independente pendente (ver abaixo) |
+| 4 | Slides sobre processos e threads em um SO atual (Linux) | Pedro Lima | `apresentacao/` | Primeira versão no Canva (15 slides); correções e envio ao repositório pendentes (ver abaixo) |
+| 5 | Revisão final e publicação dos materiais no Padlet | Ana Flávia dos Santos Peixoto | Padlet | Pendente (ver abaixo) |
+| 6 | Apresentação do trabalho no dia | Guilherme Gouvêa da Silva e Victor Orlando Avelar (disponibilidade a confirmar) | — | Pendente (ver abaixo) |
 
 ## O que falta, por responsável
 
 As partes 1 e 2 já foram entregues; a parte 6 depende da confirmação dos apresentadores. Cada item abaixo é de responsabilidade de quem está indicado. Ao concluir, avise no grupo e marque o item como feito (`[x]`) neste arquivo.
 
-### Gabriel Alves Domingos — Testes (prazo: 23/11)
+### Gabriel Alves Domingos — Testes
 
 - [ ] Reproduzir a demonstração do xv6 seguindo [`xv6-demo/README.md`](../xv6-demo/README.md), seção "Como reproduzir". É preciso o kit do professor (`xv6.sh` + `so-xv6-2024.tar`) e Docker.
 - [ ] Executar `proc_demo`, `proc_demo pausa` (com `Ctrl-P` durante a pausa) e `uthread`, digitando um comando por vez.
@@ -31,7 +29,7 @@ As partes 1 e 2 já foram entregues; a parte 6 depende da confirmação dos apre
 - [ ] Preencher o item 11 de [`xv6-demo/evidencias/comandos-e-resultados.md`](../xv6-demo/evidencias/comandos-e-resultados.md) com o resultado esperado, o observado e a data. Registrar somente o que foi realmente executado.
 - [ ] Se algo falhar, avisar no grupo com a saída do terminal, para que a parte 2 corrija.
 
-### Pedro Lima — Slides sobre Linux (prazos: editável + PDF em 23/11; ajustes finais em 24/11)
+### Pedro Lima — Slides sobre Linux
 
 Correções na primeira versão:
 
@@ -58,7 +56,7 @@ Correções na primeira versão:
   - repositório e KernelPlay.
 - [ ] **Salvar em [`apresentacao/`](../apresentacao/README.md):** `processos-threads-linux.pdf` e a fonte editável (`.pptx` exportado do Canva) ou o link de edição do Canva.
 
-### Ana Flávia dos Santos Peixoto — Revisão final e Padlet (prazo: 24/11)
+### Ana Flávia dos Santos Peixoto — Revisão final e Padlet
 
 - [ ] Revisar a justificativa ([`docs/justificativa/justificativa-tecnica.pdf`](justificativa/justificativa-tecnica.pdf)) e os slides corrigidos, e devolver sugestões no grupo.
 - [ ] Conferir as entregas: nomes de arquivos, PDFs que abrem, links, referências e o código em `xv6-demo/`.
@@ -66,11 +64,11 @@ Correções na primeira versão:
   - **Simulador:** link do KernelPlay e PDF da justificativa;
   - **Demonstração no xv6:** link para `xv6-demo/` (README, código e evidências);
   - **SO atual:** PDF dos slides.
-- [ ] Organizar a conferência conjunta e o encerramento em 24/11.
+- [ ] Organizar a conferência conjunta e o encerramento.
 
 ### Guilherme Gouvêa da Silva e Victor Orlando Avelar — Apresentação no dia
 
-- [ ] Confirmar no grupo, hoje (23/11), se podem apresentar.
+- [ ] Confirmar no grupo se podem apresentar.
 - [ ] **Principal:** jogar e saber explicar o minigame **Seja o Escalonador** do [KernelPlay](https://pedrobrassi.github.io/projeto-s.o/kernelPlay/). É a parte que mostra o nosso tema: processos e threads, despacho nos núcleos e a diferença entre os modelos 1:1 e N:1.
 - [ ] Entender como o KernelPlay funciona. O Pedro Brassi pode ajudar.
 - [ ] Estudar o conteúdo dos slides sobre Linux.

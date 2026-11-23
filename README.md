@@ -39,7 +39,7 @@ projeto-s.o/
 
 O conteúdo didático sobre xv6 dentro do jogo não comprova a execução da demonstração prática; as evidências reais estão em [`xv6-demo/evidencias/`](xv6-demo/evidencias/comandos-e-resultados.md).
 
-Cronograma, responsáveis e situação detalhada: [planejamento](docs/planejamento.md). Entrega oficial: 25/11/2026.
+Responsáveis e situação detalhada: [planejamento](docs/planejamento.md).
 
 ## Documentação da plataforma
 
