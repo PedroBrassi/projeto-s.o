@@ -352,7 +352,7 @@ $ Ctrl-P   (procdump)
       },
       man: [
         { termo: "fork", secao: "2", resumo: "cria um processo filho, cópia do pai",
-          detalhe: "Retorna 0 no filho, o PID do filho no pai e um valor negativo em caso de erro. A memória do filho é uma cópia da do pai (copy-on-write). O filho começa como Pronto.",
+          detalhe: "Retorna 0 no filho, o PID do filho no pai e um valor negativo em caso de erro. A semântica é de memória privada após fork: o Linux normalmente implementa a cópia com copy-on-write; a base xv6-labs-2024 usada aqui copia as páginas em uvmcopy(). O filho começa como Pronto.",
           exemplo: "pid = fork();\nif(pid == 0){ /* filho */ } else if(pid > 0){ /* pai */ }",
           veja: ["exec(2)", "wait(2)", "exit(2)"] },
         { termo: "exec", secao: "2", resumo: "substitui o programa do processo por outro",
@@ -592,10 +592,10 @@ fork();`,
           detalhe: "Cada thread tem seu contador de programa, registradores, pilha e estado; compartilha com as outras o código, os dados globais, o heap e os arquivos abertos. Criar e trocar threads é mais barato que processos, mas o compartilhamento exige sincronização.",
           veja: ["modelos de threads(7)", "pthread_create(3)", "condição de disputa(7)"] },
         { termo: "modelos de threads", secao: "7", resumo: "como threads de usuário são mapeadas em threads de núcleo",
-          detalhe: "N:1: várias threads de usuário numa só de núcleo (leve, mas uma E/S bloqueia todas e não há paralelismo). 1:1: cada thread de usuário tem a sua de núcleo (Linux e Windows). N:M: N threads de usuário sobre M de núcleo (Solaris, FreeBSD KSE; escalável e paralelo, porém complexo).",
+          detalhe: "N:1: várias threads de usuário numa só de núcleo (leve, mas uma E/S bloqueia todas e não há paralelismo). 1:1: cada thread de usuário tem a sua de núcleo (Linux e Windows). N:M: N threads de usuário sobre M de núcleo (exemplos históricos de Solaris e FreeBSD KSE; escalável e paralelo, porém complexo).",
           veja: ["thread(7)"] },
         { termo: "pthread_create", secao: "3", resumo: "cria uma nova thread (POSIX Threads)",
-          detalhe: "Faz parte do padrão IEEE POSIX 1003.1c (1995). Compile com -lpthread (ou -pthread). Outras chamadas: pthread_exit (encerra a thread), pthread_yield (cede a CPU).",
+          detalhe: "Faz parte do padrão IEEE POSIX 1003.1c (1995). Compile com -lpthread (ou -pthread). Outras chamadas: pthread_exit (encerra a thread) e sched_yield (cede a CPU conforme a política). pthread_yield é uma extensão obsoleta desde glibc 2.34; ceder CPU não substitui sincronização.",
           exemplo: "pthread_create(&t, NULL, funcao, arg);",
           veja: ["pthread_join(3)", "thread(7)"] },
         { termo: "pthread_join", secao: "3", resumo: "espera outra thread terminar",
@@ -642,11 +642,11 @@ fork();`,
         {
           tipo: "conceito",
           titulo: "Threads de usuário, de núcleo e modelos",
-          texto: `<p>Threads de <b>usuário</b> são criadas por bibliotecas e o SO <b>não as vê</b>; threads de <b>núcleo</b> são gerenciadas e escalonadas pelo SO.</p>
+          texto: `<p>Threads da aplicação podem ter entidades escalonáveis correspondentes no kernel. No modelo <b>N:1</b>, a biblioteca gerencia vários fluxos sem que o kernel os escalone individualmente; em <b>1:1</b>, cada thread tem uma entidade correspondente no núcleo.</p>
             <ul>
               <li><b>N:1</b>: várias de usuário sobre uma de núcleo. Leve, mas se uma thread faz E/S bloqueante, <b>todas bloqueiam</b>, e não há paralelismo.</li>
-              <li><b>1:1</b>: cada thread de usuário tem a sua de núcleo. Não bloqueante e paralelo; é o modelo do <b>Linux e do Windows</b>. Pesa com muitas threads.</li>
-              <li><b>N:M</b>: N de usuário sobre M de núcleo. Une escalabilidade e paralelismo, mas é <b>complexo</b> (Solaris, FreeBSD KSE).</li>
+              <li><b>1:1</b>: cada thread de usuário tem a sua de núcleo. Uma thread pode bloquear sem suspender necessariamente as outras, com possibilidade de paralelismo; é o modelo do <b>Linux e do Windows</b>. Pesa com muitas threads.</li>
+              <li><b>N:M</b>: N de usuário sobre M de núcleo. Une escalabilidade e paralelismo, mas é <b>complexo</b> (exemplos históricos: implementações de Solaris e FreeBSD KSE).</li>
             </ul>`
         },
         {
@@ -767,14 +767,14 @@ acquire(struct spinlock *lk)
         comando: "ps aux | grep sleep",
         saida: `pedro       3210  0.0  0.0   8392  1024 pts/0    S    09:40   0:00 sleep 100
 pedro       3411  0.0  0.0   9212  2304 pts/0    S+   09:41   0:00 grep sleep`,
-        texto: "O <code>|</code> cria um <b>pipe</b>: a saída do <code>ps</code> vira a entrada do <code>grep</code>. É um canal unidirecional, 1:1, orientado a fluxo e confiável, com capacidade finita (64 KB no Linux)."
+        texto: "O <code>|</code> cria um <b>pipe</b>: a saída do <code>ps</code> vira a entrada do <code>grep</code>. É um canal unidirecional de bytes com capacidade finita. Vários processos podem compartilhar suas pontas. No Linux, a capacidade é configurável; 64 KiB é um exemplo de 16 páginas de 4 KiB, não uma constante universal."
       },
       man: [
         { termo: "IPC", secao: "7", resumo: "Inter-Process Communication: mecanismos de comunicação entre processos",
           detalhe: "Processos distintos não compartilham variáveis, então se comunicam via núcleo: pipes, filas de mensagens, sockets e memória compartilhada. Aspectos: direta/indireta, síncrona/assíncrona/semissíncrona, mensagens/fluxo, capacidade, confiabilidade e número de participantes.",
           veja: ["pipe(7)", "memória compartilhada(7)"] },
         { termo: "pipe", secao: "7", resumo: "canal unidirecional que liga a saída de um processo à entrada de outro",
-          detalhe: "Local, 1:1, síncrono, orientado a fluxo, confiável e de capacidade finita (64 KB no Linux). Pipes nomeados (FIFOs) são criados com mkfifo. No xv6, o pingpong do laboratório usa dois pipes.",
+          detalhe: "Canal local unidirecional de bytes com capacidade finita, que admite vários leitores/escritores e modo não bloqueante. No Linux, consulte a capacidade com F_GETPIPE_SZ; ela depende da configuração e dos limites. PIPE_BUF trata atomicidade de escrita, não a capacidade total. Pipes nomeados (FIFOs) são criados com mkfifo. No xv6, o pingpong do laboratório usa dois pipes.",
           exemplo: "who | grep marcos | sort",
           veja: ["IPC(7)", "produtor-consumidor(7)"] },
         { termo: "memória compartilhada", secao: "7", resumo: "área de memória acessada diretamente por vários processos",
@@ -793,7 +793,7 @@ pedro       3411  0.0  0.0   9212  2304 pts/0    S+   09:41   0:00 grep sleep`,
           detalhe: "Usada pelas soluções de alternância de turno, Peterson e spinlocks. Desperdiça processamento e pode causar inversão de prioridade.",
           veja: ["Peterson(7)", "spinlock(kernel)"] },
         { termo: "Peterson", secao: "7", resumo: "solução de exclusão mútua para duas tarefas (1981)",
-          detalhe: "Usa a intenção de entrar (wants[]), a vez (turn) e uma espera condicional: só espera se o outro também quer entrar e é a vez dele. Garante exclusão mútua e espera limitada, mas usa espera ocupada.",
+          detalhe: "Usa a intenção de entrar (wants[]), a vez (turn) e uma espera condicional: só espera se o outro também quer entrar e é a vez dele. No modelo clássico com acessos atômicos e ordenação sequencial, garante exclusão mútua e espera limitada, mas usa espera ocupada. A implementação em C requer sincronização adequada ao modelo de memória.",
           veja: ["espera ocupada(7)"] },
         { termo: "spinlock", secao: "kernel", resumo: "trava com espera ocupada baseada numa operação atômica",
           detalhe: "No xv6, acquire() usa test-and-set (amoswap no RISC-V) e desliga as interrupções da CPU enquanto segura o lock.",
@@ -818,7 +818,7 @@ pedro       3411  0.0  0.0   9212  2304 pts/0    S+   09:41   0:00 grep sleep`,
           tipo: "multipla",
           pergunta: "Um pipe UNIX é…",
           opcoes: [
-            "unidirecional, 1:1 e orientado a fluxo",
+            "um canal de bytes unidirecional, com capacidade finita",
             "bidirecional e orientado a mensagens",
             "M:N, com várias leituras e escritas independentes",
             "não confiável, como o UDP"
@@ -831,13 +831,13 @@ pedro       3411  0.0  0.0   9212  2304 pts/0    S+   09:41   0:00 grep sleep`,
           tipo: "associar",
           pergunta: "Associe cada mecanismo de IPC à sua característica.",
           pares: [
-            ["Pipe", "Canal unidirecional de bytes entre dois processos"],
+            ["Pipe", "Canal unidirecional de bytes; neste exemplo, um produtor e um consumidor"],
             ["Fila de mensagens", "Mailbox: cada mensagem vai para um receptor"],
             ["Memória compartilhada", "Acesso direto, sem passar pelo núcleo"],
-            ["Socket", "Endereço IP + porta, inclusive entre máquinas"]
+            ["Socket", "Comunicação local ou de rede, conforme a família de endereços"]
           ],
           dica: "Só um deles funciona entre computadores diferentes.",
-          explicacao: "Pipes são fluxos 1:1; filas de mensagens são mailboxes; a memória compartilhada é a mais rápida; sockets permitem comunicação pela rede."
+          explicacao: "O exemplo de pipe tem dois participantes, mas descritores podem ser compartilhados por vários leitores/escritores. Sockets incluem comunicação local (AF_UNIX) e de rede. Memória compartilhada evita cópias por mensagem, mas exige sincronização."
         },
         {
           tipo: "multipla",
@@ -908,7 +908,7 @@ Obtido: 1406574`,
           ],
           correta: 1,
           dica: "contador++ parece uma instrução só, mas não é.",
-          explicacao: "É uma condição de disputa: as duas threads leem o mesmo valor e escrevem por cima. Em algumas execuções nada se perde, por isso o erro é difícil de reproduzir."
+          explicacao: "Incrementos perdidos ilustram a disputa, mas acessos concorrentes não atômicos sem sincronização constituem data race em C e têm comportamento indefinido. O resultado não se limita a um contador menor; é preciso usar mutex ou atomics adequados."
         },
         {
           tipo: "multipla",
@@ -924,10 +924,10 @@ Obtido: 1406574`,
           texto: `<p><b>Quatro requisitos:</b> nunca dois na região crítica; nada se supõe sobre velocidades ou número de CPUs;
             quem está fora não bloqueia os outros; ninguém espera para sempre.</p>
             <ul>
-              <li><b>Inibir interrupções</b>: perigoso e inútil em multiprocessadores (só dentro do núcleo).</li>
+              <li><b>Inibir interrupções</b>: recurso privilegiado que protege a CPU local, mas não basta para exclusão entre CPUs. Pode ser combinado com locks no kernel.</li>
               <li><b>Variável <code>busy</code></b>: <b>não funciona</b>, porque o teste e a atribuição não são atômicos.</li>
               <li><b>Alternância de turno</b>: garante a exclusão, mas obriga a alternar: se A não quer entrar, B fica impedido.</li>
-              <li><b>Peterson</b> (1981): intenção de entrar + vez + espera condicional. Funciona para duas tarefas, mas usa <b>espera ocupada</b>.</li>
+              <li><b>Peterson</b> (1981): intenção de entrar + vez + espera condicional. No modelo clássico de acessos atômicos e ordenação sequencial, funciona para duas tarefas, mas usa <b>espera ocupada</b>. Uma implementação C precisa respeitar seu modelo de memória, por exemplo com atomics apropriados.</li>
               <li><b>Operações atômicas</b> (TSL, XCHG): testam e alteram numa instrução só; base dos <i>spinlocks</i>.</li>
             </ul>`
         },
@@ -961,7 +961,7 @@ Obtido: 1406574`,
         {
           tipo: "multipla",
           lab: "LAB 02",
-          pergunta: "No laboratório, o peterson.c e o mutex_contador.c sempre chegam a 2.000.000. Qual é a desvantagem do Peterson em relação ao mutex?",
+          pergunta: "No modelo clássico de Peterson com acessos atômicos e ordenação adequada, qual é sua desvantagem em relação a um mutex bloqueante?",
           opcoes: [
             "O Peterson às vezes erra a conta",
             "O Peterson usa espera ocupada: a thread que espera fica girando no while, gastando CPU",
@@ -970,7 +970,7 @@ Obtido: 1406574`,
           ],
           correta: 1,
           dica: "Olhe o while (interesse[outro] && vez == outro) { }.",
-          explicacao: "Os dois garantem a exclusão mútua, mas no Peterson quem espera fica testando em laço (busy waiting). Um mutex do pthread pode suspender a thread até o lock ficar livre."
+          explicacao: "Peterson usa espera ocupada; um mutex pthread pode suspender a thread. A prova do algoritmo pressupõe acessos e ordenação adequados. Variáveis C comuns ou volatile isolado não garantem essa sincronização."
         }
       ]
     },
@@ -1026,10 +1026,11 @@ Aluno 6 CONSEGUIU um computador.
       },
       man: [
         { termo: "semáforo", secao: "7", resumo: "contador + fila de tarefas, acessado só por down e up atômicos (Dijkstra, 1965)",
-          detalhe: "down(s) (P, wait) decrementa e, se ficar negativo, suspende a tarefa na fila, sem espera ocupada. up(s) (V, signal) incrementa e acorda uma tarefa. Iniciado em 1, faz exclusão mútua; iniciado em N, controla N recursos. POSIX: sem_init, sem_wait, sem_post.",
+          detalhe: "No modelo abstrato com contador negativo, down(s) decrementa e suspende a tarefa se não houver recurso. A API POSIX não precisa expor um contador negativo. up(s) (V, signal) incrementa e acorda uma tarefa. Iniciado em 1, faz exclusão mútua; iniciado em N, controla N recursos. POSIX: sem_init, sem_wait, sem_post.",
           exemplo: "sem_wait(&computadores);\n/* usa o recurso */\nsem_post(&computadores);",
           veja: ["mutex(7)", "monitor(7)", "produtor-consumidor(7)"] },
-        { termo: "mutex", secao: "7", resumo: "semáforo binário simplificado: lock e unlock",
+        { termo: "mutex", secao: "7", resumo: "trava de exclusão mútua com propriedade: lock e unlock",
+          detalhe: "Quem adquire o mutex deve liberá-lo. Um semáforo binário não tem o mesmo contrato de propriedade e pode ser usado para sinalização entre tarefas.",
           exemplo: "pthread_mutex_lock(&mutex);\ncontador++;\npthread_mutex_unlock(&mutex);",
           veja: ["semáforo(7)", "exclusão mútua(7)"] },
         { termo: "variável de condição", secao: "7", resumo: "permite esperar uma condição dentro de uma região protegida",
@@ -1050,11 +1051,10 @@ Aluno 6 CONSEGUIU um computador.
           titulo: "Semáforos, mutexes e variáveis de condição",
           texto: `<p>Um <b>semáforo</b> (Dijkstra, 1965) é um contador com uma fila, usado só por duas operações <b>atômicas</b>:</p>
             <ul>
-              <li><code>down(s)</code> (P, <i>wait</i>): decrementa; se ficar negativo, a tarefa é <b>suspensa</b> na fila, sem espera ocupada.</li>
+              <li><code>down(s)</code> (P, <i>wait</i>): obtém um recurso ou suspende a tarefa. No modelo abstrato com contador negativo, decrementa e bloqueia se o resultado for negativo; não é uma representação exigida pela API POSIX.</li>
               <li><code>up(s)</code> (V, <i>signal</i>): incrementa; se há tarefas esperando, <b>acorda</b> uma.</li>
             </ul>
-            <p>Iniciado em <b>1</b>, dá exclusão mútua; iniciado em <b>N</b>, controla N recursos. O <b>mutex</b> é um semáforo binário simplificado
-            (<code>lock</code>/<code>unlock</code>). A <b>variável de condição</b> deixa uma tarefa esperar uma condição sem gastar CPU.</p>`
+            <p>Iniciado em <b>1</b>, dá exclusão mútua; iniciado em <b>N</b>, controla N recursos. O <b>mutex</b> tem propriedade: quem adquire deve liberar (<code>lock</code>/<code>unlock</code>). Um semáforo binário pode sinalizar entre tarefas; não tem o mesmo contrato. A <b>variável de condição</b> deixa uma tarefa esperar uma condição sem gastar CPU.</p>`
         },
         {
           tipo: "multipla",
@@ -1156,12 +1156,12 @@ while (!item_disponivel)
           pergunta: "Associe cada mecanismo à sua característica.",
           pares: [
             ["Semáforo", "Contador com down e up controlados pelo programador"],
-            ["Mutex", "Semáforo binário: lock e unlock"],
+            ["Mutex", "Trava com propriedade: quem adquire deve liberar"],
             ["Variável de condição", "Esperar uma condição sem gastar CPU"],
             ["Monitor", "Exclusão mútua automática garantida pela linguagem"]
           ],
           dica: "Do mais básico (contador) ao mais alto nível (linguagem).",
-          explicacao: "Semáforos são o mecanismo básico; mutexes são o caso binário; variáveis de condição esperam eventos; monitores encapsulam tudo isso na linguagem."
+          explicacao: "Semáforos controlam contagem e sinalização; mutexes controlam exclusão com propriedade; variáveis de condição aguardam predicados protegidos; monitores encapsulam dados e exclusão."
         }
       ]
     },
@@ -1316,16 +1316,16 @@ P4     15`,
         {
           tipo: "ordenar",
           lab: "LAB 02",
-          pergunta: "O rr.c (quantum = 2) roda P1(8), P2(2), P3(1) e P4(3). Ordene as primeiras fatias de CPU.",
+          pergunta: "Com chegadas P1=0, P2=1, P3=2, P4=3 e durações 8, 2, 1, 3, aplique Round-Robin (quantum 2). Novas chegadas entram antes da tarefa preemptada. Ordene as primeiras fatias.",
           itens: [
             "t=0: P1 por 2",
             "t=2: P2 por 2",
             "t=4: P3 por 1",
-            "t=5: P4 por 2",
-            "t=7: P1 por 2"
+            "t=5: P1 por 2",
+            "t=7: P4 por 2"
           ],
           dica: "Cada processo recebe no máximo 2 unidades e volta para o fim da fila.",
-          explicacao: "P1 usa o quantum e cede; P2 termina em 4; P3 termina em 5; P4 usa 2; P1 volta. A espera média cai para 3,25, contra 5,75 do FCFS com os mesmos dados."
+          explicacao: "Gantt: P1[0–2], P2[2–4], P3[4–5], P1[5–7], P4[7–9], P1[9–11], P4[11–12], P1[12–14]. Esperas: 6, 1, 2 e 6; média = 15/4 = 3,75. FCFS com essas chegadas e durações tem média 5,75."
         },
         {
           tipo: "multipla",
@@ -1372,7 +1372,7 @@ prioridade = {3, 1, 0, 2}   // P1, P2, P3, P4`,
             ["SCHED_OTHER", "Padrão das tarefas interativas"]
           ],
           dica: "EDF = Earliest Deadline First.",
-          explicacao: "DEADLINE > FIFO > RR são as classes de tempo real; OTHER (NORMAL), BATCH e IDLE são as classes comuns."
+          explicacao: "SCHED_DEADLINE tem precedência sobre as políticas citadas. FIFO e RR usam prioridades estáticas de tempo real: uma RR de prioridade maior pode preemptar uma FIFO. RR acrescenta quantum. OTHER (NORMAL), BATCH e IDLE são políticas comuns."
         },
         {
           tipo: "multipla",
@@ -1700,7 +1700,7 @@ Thread-B: tentando obter recurso1...
           ],
           correta: 1,
           dica: "Em que estado ficam as tarefas que esperam um lock comum?",
-          explicacao: "As tarefas em impasse estão bloqueadas, e a CPU atende outras ou fica ociosa. Com spinlocks (espera ocupada), elas gastariam CPU, situação às vezes chamada de livelock."
+          explicacao: "As tarefas em impasse estão bloqueadas, e a CPU atende outras ou fica ociosa. Um deadlock com espera em spinlocks também pode consumir CPU. Isso não o transforma automaticamente em livelock: neste, tarefas continuam agindo em resposta umas às outras, mas sem avançar."
         },
         {
           tipo: "multipla",

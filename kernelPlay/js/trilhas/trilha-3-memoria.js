@@ -195,7 +195,7 @@ walk(pagetable_t pagetable, uint64 va, int alloc)
         { termo: "quadro", secao: "7", resumo: "frame: bloco da memória física do tamanho de uma página",
           veja: ["página(7)"] },
         { termo: "tabela de páginas", secao: "7", resumo: "mapa de cada processo: para cada página, o quadro onde ela está e suas flags",
-          detalhe: "A tabela ativa é apontada pelo PTBR (Page Table Base Register), trocado a cada troca de contexto. Flags: presença, proteção (R/W/X), usuário/núcleo, referência (R) e modificação (M). Para não gastar memória com faixas vazias, a tabela é multinível (3 níveis no xv6, 4 no x86-64).",
+          detalhe: "A tabela ativa é apontada pelo PTBR (Page Table Base Register), trocado a cada troca de contexto. Flags: presença, proteção (R/W/X), usuário/núcleo, referência (R) e modificação (M). Para não gastar memória com faixas vazias, a tabela é multinível (3 níveis no Sv39 do xv6; 4 no x86-64 clássico ou 5 quando suportados e habilitados).",
           veja: ["TLB(7)", "página(7)", "MMU(7)"] },
         { termo: "TLB", secao: "7", resumo: "Translation Lookaside Buffer: cache de traduções recentes dentro da MMU",
           detalhe: "Evita consultar a tabela de páginas na RAM a cada acesso. Funciona bem graças à localidade de referências.",
@@ -266,7 +266,7 @@ página 2 está no quadro 5 → físico = 5 × 4.096 + 8 = 20.488</pre>`
             ["Modificação (M)", "A página foi escrita (dirty)"]
           ],
           dica: "Os bits R e M são usados pelos algoritmos de substituição da fase 3.4.",
-          explicacao: "Presença diz se há tradução; proteção limita o tipo de acesso; R e M são ligados pela MMU e ajudam o SO a escolher que página tirar da RAM."
+          explicacao: "Presença diz se há tradução; proteção limita o tipo de acesso; R/M são nomes genéricos de referência e modificação neste modelo. No RISC-V, A/D representam acesso e escrita, enquanto R é permissão de leitura. V indica validade da tradução, não a causa de uma eventual falta."
         },
         {
           tipo: "multipla",
@@ -369,7 +369,7 @@ página 2 está no quadro 5 → físico = 5 × 4.096 + 8 = 20.488</pre>`
           detalhe: "O Meltdown usava a execução especulativa do processador para ler páginas do núcleo a partir do modo usuário. Com o KPTI, só um pequeno conjunto de páginas do núcleo (o necessário para syscalls e interrupções) fica no espaço do processo.",
           veja: ["espaço de endereçamento(7)"] },
         { termo: "seções de memória", secao: "7", resumo: "TEXT, DATA, BSS, HEAP e STACK",
-          detalhe: "TEXT: código (ler/executar). DATA: variáveis globais inicializadas. BSS: globais não inicializadas. HEAP: alocação dinâmica, cresce para cima. STACK: variáveis locais e chamadas, cresce para baixo (no Linux). No Linux: cat /proc/PID/maps.",
+          detalhe: "TEXT: código (ler/executar). DATA: variáveis globais inicializadas. BSS: globais sem inicializador ou inicializadas com zero na configuração usual GCC/ELF. HEAP: alocação dinâmica, cresce para cima. STACK: variáveis locais e chamadas, cresce para baixo (no Linux). No Linux: cat /proc/PID/maps.",
           exemplo: "cat /proc/self/maps",
           veja: ["heap(7)", "pilha(7)"] },
         { termo: "pilha", secao: "7", resumo: "stack: área das variáveis locais, parâmetros e endereços de retorno",
@@ -415,7 +415,7 @@ página 2 está no quadro 5 → físico = 5 × 4.096 + 8 = 20.488</pre>`
           texto: `<p>Cada processo é uma \"cápsula\" de memória isolada. Dos endereços baixos para os altos:</p>
             <ul>
               <li><b>TEXT</b>: o código (só leitura e execução);</li>
-              <li><b>DATA</b>: variáveis globais inicializadas; <b>BSS</b>: globais não inicializadas;</li>
+              <li><b>DATA</b>: variáveis globais inicializadas; <b>BSS</b>: globais sem inicializador ou zeradas no modelo usual GCC/ELF;</li>
               <li><b>HEAP</b>: dados dinâmicos, cresce para cima;</li>
               <li>… bibliotecas e áreas mapeadas …</li>
               <li><b>STACK</b>: a pilha, cresce para baixo.</li>
@@ -434,21 +434,21 @@ página 2 está no quadro 5 → físico = 5 × 4.096 + 8 = 20.488</pre>`
           tipo: "associar",
           pergunta: "Associe cada trecho de código C à área onde o dado fica.",
           pares: [
-            ["int total = 0;  (variável global)", "DATA (alocação estática)"],
+            ["int total = 7;  (variável global)", "DATA (alocação estática)"],
             ["int i;  (variável local de função)", "Pilha (alocação automática)"],
             ["malloc(n * sizeof(int))", "Heap (alocação dinâmica)"],
             ["as instruções de main()", "TEXT"]
           ],
           dica: "Locais nascem e morrem com a função.",
-          explicacao: "Globais (e static) existem a execução inteira; locais vivem na pilha enquanto a função executa; malloc reserva no heap; o código fica em TEXT."
+          explicacao: "Globais e static têm duração estática. No GCC/ELF usual, uma global inicializada com 7 fica em DATA; globais sem inicializador ou zeradas costumam ir para BSS. A disposição depende do compilador e opções. Locais podem usar pilha ou registradores; malloc fornece memória dinâmica; instruções ficam em TEXT."
         },
         {
           tipo: "multipla",
           pergunta: "O que acontece se um programa chama malloc em laço e nunca chama free?",
-          opcoes: ["Nada: a pilha libera sozinha", "Memory leak: o heap cresce sem parar", "Falta de página imediata", "O compilador acusa erro"],
+          opcoes: ["Nada: a pilha libera sozinha", "Memory leak: alocações não liberadas podem esgotar a memória disponível", "Falta de página imediata", "O compilador acusa erro"],
           correta: 1,
           dica: "Em C não há coletor de lixo.",
-          explicacao: "A memória dinâmica só é devolvida com free (ou quando o processo termina). Sem free, o heap só cresce: é um vazamento de memória (memory leak)."
+          explicacao: "Perder referências a alocações sem liberá-las causa vazamento. A memória disponível é limitada, malloc pode falhar e o processo pode ser encerrado. free permite reutilização pelo alocador, mas nem sempre devolve imediatamente páginas ao kernel."
         },
         {
           tipo: "terminal",
@@ -753,7 +753,7 @@ faltapagina(struct proc *p)
           detalhe: "Ao levar uma página ao disco, o SO desliga o bit de presença e anota a posição no disco. Se ela for acessada, ocorre uma falta de página e o núcleo a recarrega (page-in).",
           veja: ["falta de página(7)", "substituição de páginas(7)"] },
         { termo: "falta de página", secao: "7", resumo: "page fault: acesso a uma página que não está na RAM (ou sem permissão)",
-          detalhe: "A MMU gera a interrupção; o SO verifica se o acesso é válido, escolhe um quadro (salvando a vítima se modificada), lê a página do disco, atualiza a tabela e reexecuta a instrução. Enquanto isso, o processo fica suspenso.",
+          detalhe: "É uma exceção síncrona provocada pelo acesso. Pode indicar proteção, COW, alocação sob demanda ou necessidade de page-in. No caso de uma página válida retirada da RAM, o SO obtém um quadro, lê os dados, atualiza o mapeamento e retoma a instrução; uma falta menor pode dispensar acesso ao armazenamento.",
           veja: ["paginação em disco(7)", "MMU(7)"] },
         { termo: "tempo médio de acesso", secao: "7", resumo: "(1 − p) · t_RAM + p · t_falta",
           detalhe: "Como o disco é cerca de 100.000 vezes mais lento que a RAM, até uma taxa de faltas p minúscula multiplica o tempo médio.",
@@ -787,7 +787,7 @@ faltapagina(struct proc *p)
           tipo: "conceito",
           titulo: "A falta de página",
           texto: `<p>Quando uma página vai para a área de <b>swap</b>, o SO desliga o <b>bit de presença</b> na tabela e anota a posição no disco.
-            Se o processo acessar essa página, a <b>MMU</b> gera uma interrupção de <b>falta de página</b> e o SO:</p>
+            Se o processo acessar essa página, a <b>MMU</b> gera uma exceção síncrona de <b>falta de página</b>. No caso de uma página válida que precisa voltar do armazenamento, o SO:</p>
             <ol>
               <li>verifica se o acesso é válido;</li>
               <li>escolhe um quadro livre (ou libera um, salvando a vítima no disco se ela foi modificada);</li>
@@ -799,16 +799,16 @@ faltapagina(struct proc *p)
         },
         {
           tipo: "ordenar",
-          pergunta: "Ordene o tratamento de uma falta de página.",
+          pergunta: "Ordene o page-in de uma página válida que foi retirada da RAM e precisa ser lida do armazenamento.",
           itens: [
-            "A MMU gera a interrupção de falta de página",
+            "A MMU gera a exceção de falta de página",
             "O SO verifica se o acesso é válido",
             "O SO escolhe um quadro (salvando a vítima, se modificada)",
             "A página é lida do disco para o quadro",
             "A tabela de páginas é atualizada e a instrução é reexecutada"
           ],
           dica: "Quem percebe o problema é o hardware.",
-          explicacao: "MMU detecta → SO valida → arranja um quadro → lê a página → atualiza a tabela e repete a instrução. Enquanto isso, o processo fica suspenso."
+          explicacao: "MMU detecta → SO valida → arranja um quadro → lê a página → atualiza a tabela e repete a instrução. Este é o caso de page-in; outras faltas podem ser resolvidas sem disco, por COW ou alocação sob demanda, ou indicar acesso inválido."
         },
         {
           tipo: "multipla",
@@ -886,7 +886,7 @@ faltapagina(struct proc *p)
 Mem:           7.8Gi       2.1Gi       3.9Gi        28Mi       1.8Gi       5.4Gi
 Swap:          2.0Gi          0B       2.0Gi
 60`,
-        texto: "A linha <b>Swap</b> é a área de troca no disco. O <code>swappiness</code> (0 a 200, padrão 60) diz o quanto o kernel prefere mandar páginas anônimas para o swap em vez de descartar o cache de arquivos. O Linux escolhe as vítimas com aproximações do LRU; versões recentes usam o <b>MGLRU</b> (gerações)."
+        texto: "A linha <b>Swap</b> é a área de troca no disco. O <code>swappiness</code> (0 a 200, padrão 60) diz o quanto o kernel prefere mandar páginas anônimas para o swap em vez de descartar o cache de arquivos. O Linux escolhe as vítimas com aproximações do LRU; kernels recentes podem usar o <b>MGLRU</b> (gerações), conforme configuração de compilação e habilitação em execução."
       },
       man: [
         { termo: "substituição de páginas", secao: "7", resumo: "escolher qual página tirar da RAM quando a memória está cheia",

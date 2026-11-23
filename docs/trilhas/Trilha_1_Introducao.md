@@ -286,10 +286,10 @@ A estrutura interna define: como os componentes se organizam; onde os serviços 
 - **Camadas:** níveis hierárquicos — cada camada usa serviços da inferior e oferece à superior; facilita teste, manutenção e segurança. Primeiro sistema: **THE** (Technische Hogeschool Eindhoven, E. W. Dijkstra, 1968).
   *Desvantagens:* dificuldade de definir as camadas; chamadas atravessam várias camadas (custo de desempenho); dependências nem sempre são hierárquicas.
 - **Micronúcleo (microkernel):** mantém no kernel só funções essenciais; move serviços para o espaço de usuário; busca modularidade, isolamento, confiabilidade e extensibilidade; comunicação por **troca de mensagens**.
-  *Desvantagens:* overhead de mensagens e trocas de modo/contexto → pior desempenho. **Caso Windows NT:** a 1ª versão era microkernel em camadas e tinha desempenho baixo frente ao Windows 95; o NT 4.0 moveu camadas do espaço de usuário para o kernel; no XP a arquitetura já era mais monolítica que microkernel.
+  *Custos:* comunicação por mensagens e trocas de contexto devem ser avaliadas junto do isolamento. O Windows NT combina componentes de usuário e kernel; não se deve descrevê-lo como um micronúcleo puro que simplesmente mudou de categoria.
 - **Monolítica:** grande parte do SO executa no núcleo (modo privilegiado), com chamadas diretas entre componentes (processos, memória, sistema de arquivos, drivers, rede). Vantagens: alto desempenho e facilidade de interação interna.
   *Desvantagens:* um erro em qualquer componente pode derrubar o sistema inteiro; pouca robustez e isolamento; manutenção e evolução mais difíceis.
-- **Módulos:** núcleo com componentes nucleares que vincula serviços adicionais por **módulos carregáveis** na inicialização ou em execução (UNIX modernos, Solaris, Linux, Mac OS X, Windows). Lembra camadas (interfaces definidas e protegidas), porém mais flexível (qualquer módulo chama qualquer outro); lembra microkernel (núcleo mínimo que sabe carregar módulos), porém mais eficiente (sem troca de mensagens).
+- **Módulos:** componentes do kernel organizados por interfaces, inclusive módulos carregáveis. Modularidade não exige núcleo mínimo: Linux é monolítico e modular. Muitos serviços de um micronúcleo executam em processos de usuário; chamadas diretas ou mensagens não garantem, isoladamente, maior desempenho.
 - **Híbridos:** poucos SOs seguem uma estrutura única. Linux e Solaris são monolíticos (desempenho de um único espaço de endereçamento) **e** modulares. Windows é amplamente monolítico, mas mantém comportamentos de microkernel (subsistemas separados) e módulos carregáveis.
   - **iOS:** camadas — *Cocoa Touch* (API Objective-C para apps), *serviços de mídia* (gráficos, áudio, vídeo), *serviços nucleares* (nuvem, bancos de dados) e o núcleo.
   - **Android:** pilha de software em camadas; na base, kernel Linux modificado pelo Google (fora da distribuição normal), usado para processos, memória, drivers e gerenciamento de energia.
@@ -304,8 +304,10 @@ A estrutura interna define: como os componentes se organizam; onde os serviços 
 1. **Quais são as duas grandes perspectivas sobre o que um SO faz?** **a) Máquina estendida e gerenciador de recursos** · b) Compilador e interpretador · c) Shell e GUI · d) Kernel e driver
 2. **O que acontece primeiro quando uma aplicação faz uma chamada de sistema?** → O processador passa de modo usuário para modo núcleo (e salva o contexto).
 3. **Qual estrutura mantém no kernel apenas o essencial e usa troca de mensagens?** → Micronúcleo.
-4. **Por que o Windows NT migrou de microkernel para algo mais monolítico?** → Desempenho: o overhead de mensagens deixava o sistema lento.
+4. **Qual descrição evita confundir modularidade e micronúcleo?** → Um kernel pode ser monolítico e modular; módulos não exigem núcleo mínimo.
 5. **Qual foi o primeiro sistema em camadas e quem o criou?** → THE, de Dijkstra (1968).
-6. **Qual a diferença entre módulos e microkernel?** → Ambos têm núcleo mínimo, mas módulos se comunicam por chamadas diretas (sem mensagens), sendo mais eficientes.
+6. **Qual a diferença entre módulos e micronúcleo?** → Módulos podem executar no kernel; muitos serviços de um micronúcleo executam em modo usuário e usam mensagens. O desempenho depende da implementação.
 7. **Associe:** z/OS → grande porte · Android → móvel · controlador de freio ABS → tempo real/embarcado · Ubuntu Server → servidor.
 8. **Classifique a chamada "alterar permissões de um arquivo":** → Comunicação e proteção.
+
+Revisão técnica de 23/11/2026: [correções, fontes e limites dos exemplos](../revisao-conteudo-2026-11-23.md).

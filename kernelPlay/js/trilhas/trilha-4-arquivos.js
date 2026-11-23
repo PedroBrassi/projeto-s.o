@@ -59,7 +59,7 @@ Change: 2026-10-30 21:26:54.697290750 -0300
           detalhe: "É a unidade básica de armazenamento persistente. Operações: criar, abrir, ler, escrever, fechar, remover e alterar atributos.",
           veja: ["metadados(7)", "descritor de arquivo(7)"] },
         { termo: "metadados", secao: "7", resumo: "informações sobre o arquivo: nome, tipo, tamanho, datas, dono, permissões e localização",
-          detalhe: "Ficam no i-node (UNIX) ou em estruturas equivalentes. Mapas de blocos livres também são metadados do sistema de arquivos.",
+          detalhe: "Tipo, permissões, dono e informações de blocos ficam no i-node ou equivalente; o nome fica na entrada do diretório. Mapas de blocos livres são metadados gerais do sistema de arquivos.",
           exemplo: "ls -l hello.c\nstat hello.c",
           veja: ["i-node(7)", "stat(1)"] },
         { termo: "stat", secao: "1", resumo: "mostra os metadados completos de um arquivo",
@@ -225,13 +225,13 @@ Change: 2026-10-30 21:26:54.697290750 -0300`,
           pergunta: "O que é /dev/sda1?",
           opcoes: [
             "Um arquivo de configuração do disco",
-            "Um arquivo especial que representa a 1ª partição do 1º disco SATA",
+            "Um nó de dispositivo de bloco que representa a primeira partição de sda neste sistema",
             "Uma pasta com os arquivos do usuário",
             "Um programa que formata discos"
           ],
           correta: 1,
           dica: "sd = disco, a = primeiro disco, 1 = primeira partição.",
-          explicacao: "No UNIX, dispositivos aparecem como arquivos em /dev. Ler e escrever em /dev/sda1 é ler e escrever direto na partição."
+          explicacao: "/dev/sda1 representa a primeira partição de sda nesse sistema. O nome não garante transporte SATA, ordem física nem identificação persistente; dispositivos SCSI, SATA e USB podem usar a família sd."
         },
         {
           tipo: "multipla",
@@ -298,7 +298,7 @@ lrwx------ 1 pedro pedro 64 Oct 30 21:28 255 -> /dev/pts/0`,
           detalhe: "De baixo nível: criado pelo núcleo na abertura; no UNIX é um inteiro (0 = stdin, 1 = stdout, 2 = stderr), no Windows um handle. De alto nível: a referência da linguagem (FILE* em C, streams em Java), que envolve o de baixo nível e acrescenta buffers. As bibliotecas fazem o mapeamento, o que torna as aplicações portáveis.",
           veja: ["open(2)", "FILE(3)"] },
         { termo: "open", secao: "2", resumo: "abre um arquivo e devolve um descritor (o menor livre)",
-          detalhe: "O núcleo resolve o caminho, verifica as permissões, cria as estruturas do arquivo aberto (posição corrente, modo) e devolve o descritor. close() conclui escritas pendentes e libera essas estruturas.",
+          detalhe: "O núcleo resolve o caminho, verifica as permissões, cria as estruturas do arquivo aberto (posição corrente, modo) e devolve o descritor. close() remove o descritor; a descrição aberta é liberada quando não restarem referências. Fechar não garante persistência no armazenamento; use sincronização apropriada, como fsync, quando exigida.",
           exemplo: "int fd = open(\"dados.txt\", O_RDONLY);\nread(fd, buf, 100);\nclose(fd);",
           veja: ["descritor de arquivo(7)", "lseek(2)"] },
         { termo: "FILE", secao: "3", resumo: "a referência de alto nível da biblioteca C (fopen, fread, fprintf, fclose)",
@@ -311,7 +311,7 @@ lrwx------ 1 pedro pedro 64 Oct 30 21:28 255 -> /dev/pts/0`,
           detalhe: "Sequencial: do início ao fim (textos, logs, mídia). Aleatório: qualquer posição com lseek (bancos de dados, registros fixos). Mapeado: o arquivo vira uma região de memória com mmap (executáveis, bibliotecas). Indexado: por chave, com um índice (SGBDs).",
           veja: ["lseek(2)", "mmap(2)"] },
         { termo: "mmap", secao: "2", resumo: "mapeia um arquivo numa região do espaço de endereçamento",
-          detalhe: "Ler e escrever nessa memória lê e escreve no arquivo, usando o mecanismo de paginação. É assim que o Linux carrega executáveis e bibliotecas.",
+          detalhe: "Mapeamentos de arquivo fornecem acesso via memória. Em MAP_SHARED, alterações podem ser propagadas ao arquivo, conforme sincronização; MAP_PRIVATE usa COW e suas alterações não são gravadas no arquivo. Executáveis e bibliotecas também usam mapeamentos.",
           veja: ["formas de acesso(7)"] },
         { termo: "trava", secao: "7", resumo: "lock de arquivo: evita condições de disputa entre processos",
           detalhe: "Obrigatórias ou consultivas (advisory); compartilhadas (leitura) ou exclusivas (escrita). No Linux: flock e fcntl.",
@@ -369,7 +369,7 @@ lrwx------ 1 pedro pedro 64 Oct 30 21:28 255 -> /dev/pts/0`,
               <li><b>Alto nível</b>: <code>FILE*</code> em C, streams em Java, que envolvem o descritor e acrescentam buffers.</li>
             </ul>
             <p>Na <b>abertura</b>, o núcleo resolve o caminho, verifica as permissões, cria as estruturas do arquivo aberto (com a
-            <b>posição corrente</b>) e devolve o descritor. No <b>fechamento</b>, conclui as escritas pendentes e libera essas estruturas.</p>`
+            <b>posição corrente</b>) e devolve o descritor. No <b>fechamento</b>, remove o descritor e libera a descrição de arquivo aberto quando não restarem referências. <code>close()</code> não garante persistência no disco; isso exige sincronização apropriada, como <code>fsync()</code>, com verificação de erros.</p>`
         },
         {
           tipo: "associar",
@@ -395,13 +395,13 @@ lrwx------ 1 pedro pedro 64 Oct 30 21:28 255 -> /dev/pts/0`,
           pergunta: "O que o fechamento de um arquivo garante?",
           opcoes: [
             "Que o arquivo seja apagado",
-            "Que as escritas pendentes sejam concluídas e as estruturas do núcleo sejam liberadas",
+            "Que o descritor seja fechado; isso não garante que os dados tenham sido persistidos no disco",
             "Que ninguém mais consiga abri-lo",
             "Que o arquivo vá para o fim do disco"
           ],
           correta: 1,
           dica: "O que foi criado na abertura precisa ser desfeito.",
-          explicacao: "close() termina o que estava pendente e libera a entrada na tabela de arquivos abertos e as estruturas do núcleo."
+          explicacao: "close() encerra o descritor. Outras referências podem manter a descrição aberta; escritas em cache podem continuar pendentes. fclose descarrega buffers da biblioteca, mas persistência requer sincronização apropriada, como fsync, e tratamento de erro."
         },
         {
           tipo: "conceito",
@@ -520,14 +520,14 @@ Inode size:	          256`,
           detalhe: "As chamadas de sistema (open, read…) falam com o VFS, que repassa para o Ext4, o NTFS, o FAT ou o /proc. Por isso o mesmo cat funciona em todos.",
           veja: ["sistema de arquivos(7)"] },
         { termo: "montagem", secao: "7", resumo: "ligar um volume formatado a um ponto de acesso",
-          detalhe: "Lê o bloco de inicialização (VBR) e cria as estruturas em memória. No UNIX, o volume vira um diretório da árvore única; no Windows, uma letra de unidade (C:, D:).",
+          detalhe: "Liga um sistema de arquivos a um ponto de acesso, consultando suas estruturas próprias (por exemplo, superbloco no Ext4). Não depende universalmente de VBR ou de partição. No Windows, pode usar letra, pasta montada ou caminho de volume.",
           exemplo: "mount /dev/sdb1 /mnt/pendrive\ndf -T",
           veja: ["sistema de arquivos(7)", "VFS(7)"] },
         { termo: "bloco", secao: "7", resumo: "a unidade mínima de alocação do sistema de arquivos",
           detalhe: "Blocos lógicos (clusters) agrupam setores físicos de 512 B ou 4 KB. Blocos grandes dão mais desempenho de E/S, mas mais fragmentação interna: um arquivo de 200 B ocupa um bloco inteiro.",
           veja: ["cache de blocos(7)", "fragmentação interna(7)"] },
         { termo: "cache de blocos", secao: "7", resumo: "blocos do disco guardados na RAM",
-          detalhe: "Read-through: guarda o que foi lido. Read-ahead: lê adiantado os próximos. Write-through: grava no disco na hora (seguro). Write-back: grava depois (rápido, mas pode perder dados num crash). Em geral: dados em write-back, metadados em write-through.",
+          detalhe: "Read-through: guarda o que foi lido. Read-ahead: lê adiantado os próximos. Write-through: grava no disco na hora (seguro). Write-back: grava depois (rápido, mas pode perder dados num crash). A política depende do sistema de arquivos e das opções. No Ext4, journaling e commits coordenam metadados; isso não equivale a write-through universal.",
           veja: ["bloco(7)", "journaling(7)"] },
         { termo: "journaling", secao: "7", resumo: "registrar as alterações num log antes de aplicá-las",
           detalhe: "Depois de um crash, o SO completa ou descarta as operações do journal, sem precisar verificar o disco inteiro (fsck). Em geral cobre só os metadados. Ext4, NTFS e o xv6 usam.",
@@ -563,11 +563,11 @@ Inode size:	          256`,
           tipo: "conceito",
           titulo: "Discos, partições e montagem",
           texto: `<p>O disco é visto como um <b>grande vetor de blocos</b>. O <b>MBR</b> (no primeiro bloco) guarda a tabela de partições
-            e o código de boot (discos modernos usam <b>GPT</b>); cada partição tem um <b>VBR</b>. Cada <b>volume</b> é formatado com seu próprio sistema de arquivos.</p>
-            <p><b>Montar</b> é ler o bloco de inicialização, criar as estruturas em memória e definir um ponto de acesso:</p>
+            e o código de boot (discos modernos usam <b>GPT</b>); um setor de boot de volume pode existir conforme o formato, mas não é uma estrutura universal de montagem. Cada <b>volume</b> é formatado com seu próprio sistema de arquivos.</p>
+            <p><b>Montar</b> é associar um sistema de arquivos a um ponto de acesso e inicializar suas estruturas próprias (como o superbloco do Ext4):</p>
             <ul>
               <li><b>UNIX</b>: o volume vira um <b>diretório</b> da árvore única (<code>mount /dev/sdb1 /mnt/pendrive</code>).</li>
-              <li><b>Windows</b>: o volume vira um <b>disco lógico</b> (C:, D:).</li>
+              <li><b>Windows</b>: o volume pode receber letra (C:, D:), pasta montada ou caminho de volume.</li>
             </ul>`
         },
         {
@@ -611,7 +611,7 @@ tmpfs          tmpfs      4053456        0    4053456   0% /dev/shm
               <li><b>Write-through</b>: grava no disco na hora; seguro, sem ganho na escrita.</li>
               <li><b>Write-back</b>: grava no cache e libera o processo; rápido, mas pode <b>perder dados num crash</b>.</li>
             </ul>
-            <p>Em geral, <b>dados usam write-back</b> e <b>metadados usam write-through</b>.</p>`
+            <p>No <b>Ext4</b>, o journal registra transações de metadados e os commits determinam sua persistência. Os modos de dados (ordered, writeback, journal) têm garantias diferentes; não há write-through universal de metadados.</p>`
         },
         {
           tipo: "multipla",
@@ -663,7 +663,7 @@ tmpfs          tmpfs      4053456        0    4053456   0% /dev/shm
           opcoes: ["FAT32 e exFAT", "ZFS e BTRFS", "ISO 9660", "Ext2"],
           correta: 1,
           dica: "Os dois têm snapshots.",
-          explicacao: "ZFS e BTRFS nunca sobrescrevem dados no lugar: escrevem em blocos livres, o que permite snapshots e recuperação para o último estado consistente."
+          explicacao: "ZFS e BTRFS usam copy-on-write para construir novos estados e oferecer snapshots. As garantias dependem da configuração e do cenário; não substituem backup nem significam que toda opção evite sobrescrita."
         },
         {
           tipo: "multipla",
@@ -732,7 +732,7 @@ EXTENTS:
           detalhe: "A tabela fica em memória, o que acelera o acesso aleatório. É um dado crítico, por isso há cópias. Usada em FAT12/16/32, pendrives e câmeras; também marca os blocos livres.",
           veja: ["alocação encadeada(7)"] },
         { termo: "i-node", secao: "7", resumo: "estrutura com os atributos de um arquivo e o índice dos seus blocos",
-          detalhe: "No Ext2/3/4: 12 ponteiros diretos, 1 indireto, 1 duplo e 1 triplo. Com blocos de 4 KB e ponteiros de 4 B: 48 KB diretos, 4 MB pelo indireto, 4 GB pelo duplo e 4 TB pelo triplo. O nome do arquivo não fica no i-node, e sim no diretório.",
+          detalhe: "No mapa tradicional do Ext2/3: 12 ponteiros diretos, 1 indireto, 1 duplo e 1 triplo. O Ext4 normalmente usa árvores de extensões quando o inode tem essa flag; também pode interpretar mapas legados. Com blocos de 4 KB e ponteiros de 4 B: 48 KB diretos, 4 MB pelo indireto, 4 GB pelo duplo e 4 TB pelo triplo. O nome do arquivo não fica no i-node, e sim no diretório.",
           exemplo: "ls -i hello.c\nstat hello.c",
           veja: ["alocação indexada(7)", "hard link(7)"] },
         { termo: "alocação indexada", secao: "7", resumo: "um índice (no i-node) aponta para os blocos do arquivo",
@@ -743,7 +743,7 @@ EXTENTS:
           exemplo: "filefrag -v grande.bin",
           veja: ["alocação contígua(7)", "alocação indexada(7)"] },
         { termo: "Ext4", secao: "7", resumo: "o sistema de arquivos mais usado no Linux",
-          detalhe: "Journaling, checksum de metadados, alocação indexada multinível e por extensões, bitmaps de blocos e de i-nodes. O volume é dividido em grupos de blocos, cada um com cópia do superbloco, descritores, bitmaps, tabela de i-nodes e blocos de dados.",
+          detalhe: "Journaling, checksum de metadados, alocação indexada multinível e por extensões, bitmaps de blocos e de i-nodes. O volume é dividido em grupos de blocos, com bitmaps, tabelas de i-nodes e dados organizados conforme os recursos habilitados. Só alguns grupos podem conter cópias do superbloco e descritores, por exemplo com sparse_super; flex_bg também altera a distribuição.",
           veja: ["journaling(7)", "extensão(7)"] }
       ],
       desafios: [
@@ -783,7 +783,7 @@ EXTENTS:
           titulo: "Indexada, multinível e extensões",
           texto: `<ul>
               <li><b>Indexada</b>: cada arquivo tem um <b>i-node</b> com os atributos e um índice de blocos. O tamanho fixo do i-node limita o arquivo, e a tabela de i-nodes limita o número de arquivos.</li>
-              <li><b>Multinível</b>: ponteiros <b>indiretos</b> apontam para blocos cheios de ponteiros. No Ext2/3/4: <b>12 diretos, 1 indireto, 1 duplo e 1 triplo</b>.</li>
+              <li><b>Multinível</b>: ponteiros <b>indiretos</b> apontam para blocos cheios de ponteiros. No mapa tradicional do Ext2/3: <b>12 diretos, 1 indireto, 1 duplo e 1 triplo</b>. O Ext4 normalmente usa árvores de extensões, conforme as flags do inode; não se deve generalizar o mapa legado.</li>
               <li><b>Extensões</b>: grupos de blocos contíguos descritos por (início lógico, início físico, quantidade). NTFS, HFS, Ext4 e ZFS.</li>
             </ul>
             <pre class="terminal">blocos de 4 KB, ponteiros de 4 B → 1024 ponteiros por bloco
@@ -794,7 +794,7 @@ EXTENTS:
         },
         {
           tipo: "multipla",
-          pergunta: "Quantos ponteiros diretos o i-node do Ext2/3/4 tem?",
+          pergunta: "Quantos ponteiros diretos há no mapa tradicional do i-node Ext2/3?",
           opcoes: ["8", "12", "15", "1024"],
           correta: 1,
           dica: "São 15 ponteiros no total, contando os indiretos.",
@@ -922,7 +922,7 @@ $ cat fisico.c
           detalhe: "/bin e /sbin (executáveis), /boot (núcleo), /dev (dispositivos), /etc (configurações), /home (usuários), /lib (bibliotecas), /mnt e /media (montagem), /proc e /sys (núcleo), /tmp (temporários), /usr (programas), /var (logs e dados variáveis).",
           veja: ["diretório(7)"] },
         { termo: "caminho absoluto", secao: "7", resumo: "caminho a partir da raiz",
-          detalhe: "Ex.: /usr/local/share/fortunes/brasil.dat. O caminho canônico é o absoluto mais curto, sem ., .. nem atalhos.",
+          detalhe: "Ex.: /usr/local/share/fortunes/brasil.dat. O caminho canônico é um absoluto normalizado após resolver . e .. e links simbólicos; não procura o menor nome entre todos os hard links.",
           veja: ["caminho relativo(7)"] },
         { termo: "caminho relativo", secao: "7", resumo: "caminho a partir do diretório de trabalho",
           detalhe: "Usa .. (pai) e . (atual). Com diretório de trabalho /home/ana/so/aula1, o relativo ../../docs/proj1.pdf é /home/ana/docs/proj1.pdf.",
@@ -933,11 +933,11 @@ $ cat fisico.c
           exemplo: "ln -s alvo atalho",
           veja: ["hard link(7)"] },
         { termo: "hard link", secao: "7", resumo: "outra entrada de diretório apontando para o mesmo i-node",
-          detalhe: "Só no mesmo volume e nunca para diretórios. O conteúdo só é liberado quando o contador de links do i-node chega a 0.",
+          detalhe: "Só no mesmo volume e nunca para diretórios. Após o último nome ser removido, referências abertas ou mapeamentos ainda podem manter o arquivo em uso. A liberação ocorre quando também deixam de existir essas referências.",
           exemplo: "ln alvo atalho",
           veja: ["link simbólico(7)", "i-node(7)"] },
         { termo: "resolução de nomes", secao: "7", resumo: "lookup: traduzir um caminho no i-node do arquivo, nível a nível",
-          detalhe: "Em cada nível, lê-se o i-node do diretório, verifica-se a permissão de travessia e lê-se a tabela de entradas. Um cache de pares caminho → i-node (hash com substituição LRU) evita repetir o trabalho. Um link simbólico encontrado no caminho é lido e resolvido de novo.",
+          detalhe: "Em cada nível, lê-se o i-node do diretório, verifica-se a permissão de travessia e lê-se a tabela de entradas. O modelo de cache desta atividade usa pares caminho → i-node e LRU. O Linux usa dentries e mecanismos próprios de recuperação; não é uma especificação universal. Um link simbólico encontrado no caminho é lido e resolvido de novo.",
           veja: ["diretório(7)"] }
       ],
       desafios: [
@@ -950,7 +950,7 @@ $ cat fisico.c
               <li><b>Direta</b>: só o nome, no diretório de trabalho (<code>index.html</code>).</li>
               <li><b>Absoluta</b>: a partir da raiz (<code>/usr/local/share/fortunes/brasil.dat</code>).</li>
               <li><b>Relativa</b>: a partir do diretório de trabalho, com <code>..</code> (pai) e <code>.</code> (atual).</li>
-              <li><b>Canônica</b>: o caminho absoluto mais curto, sem <code>.</code>, <code>..</code> nem atalhos.</li>
+              <li><b>Canônica</b>: um caminho absoluto normalizado, sem <code>.</code>, <code>..</code> ou links simbólicos após a resolução; não é uma busca pelo menor nome entre hard links.</li>
             </ul>
             <p>O separador é <code>/</code> no UNIX e <code>\\</code> no Windows (<code>C:\\Users\\maria\\docs</code>).</p>`
         },
@@ -985,7 +985,7 @@ $ cat fisico.c
             ["/home/ana/docs/proj1.pdf (sem . nem ..)", "Canônica"]
           ],
           dica: "Absoluta começa na raiz; a canônica é a absoluta mais curta.",
-          explicacao: "A direta usa só o nome; a absoluta parte de /; a relativa parte do diretório de trabalho; a canônica é a forma absoluta mais limpa."
+          explicacao: "A direta usa só o nome; a absoluta parte de /; a relativa parte do diretório de trabalho; a canônica pressupõe resolução dos componentes e links; nestes exemplos, suponha que não há links simbólicos."
         },
         {
           tipo: "terminal",
@@ -1009,7 +1009,7 @@ $ cat fisico.c
           texto: `<p>Um diretório é um <b>arquivo cujo conteúdo é uma tabela de entradas</b>: <b>nome</b>, <b>tipo</b> e <b>localização</b>
             (número do i-node). Ele <b>não contém</b> os arquivos, só os relaciona. Entradas especiais: <code>.</code> e <code>..</code>.</p>
             <p>A busca numa tabela simples (MS-DOS, Ext2) é <b>linear</b>. O Ext4, o ZFS e o NTFS usam <b>hashes e árvores</b>.
-            A posição do diretório raiz fica registrada no <b>VBR</b>.</p>`
+            A localização da raiz depende do sistema de arquivos: no Ext4, ela é o inode 2, localizado pelas estruturas próprias do volume; não é uma regra de VBR.</p>`
         },
         {
           tipo: "multipla",
@@ -1047,7 +1047,7 @@ $ cat fisico.c
               <tr><td>O que é</td><td>arquivo especial com o <b>caminho</b> do alvo</td><td>outra <b>entrada</b> para o <b>mesmo i-node</b></td></tr>
               <tr><td>Outro volume?</td><td>sim</td><td><b>não</b></td></tr>
               <tr><td>Diretórios?</td><td>sim</td><td><b>nunca</b></td></tr>
-              <tr><td>Alvo apagado</td><td>fica <b>quebrado</b></td><td>o conteúdo continua até o contador de links chegar a 0</td></tr>
+              <tr><td>Alvo apagado</td><td>fica <b>quebrado</b></td><td>o conteúdo permanece enquanto houver nomes ou referências que o mantenham em uso</td></tr>
               <tr><td>Comando</td><td><code>ln -s alvo atalho</code></td><td><code>ln alvo atalho</code></td></tr>
             </table>`
         },
@@ -1070,13 +1070,13 @@ $ cat fisico.c
           pergunta: "Você criou um hard link fisico.c para hello.c e depois apagou hello.c. O que acontece com fisico.c?",
           opcoes: [
             "Fica quebrado, como um link simbólico",
-            "Continua funcionando: o i-node só é liberado quando o contador de links chega a 0",
+            "Continua funcionando: ainda existe um nome para o mesmo i-node; referências abertas também podem preservar o arquivo",
             "Vira um link simbólico",
             "É apagado junto"
           ],
           correta: 1,
           dica: "No cartão do Linux da fase anterior, o contador de links era 2.",
-          explicacao: "Os dois nomes apontavam para o mesmo i-node. O rm apagou um nome (unlink) e o contador caiu de 2 para 1: o conteúdo continua lá."
+          explicacao: "Os dois nomes apontavam para o mesmo i-node. O rm apagou um nome (unlink) e o contador caiu de 2 para 1. Mesmo sem nomes, referências abertas podem manter o arquivo em uso até serem liberadas."
         },
         {
           tipo: "multipla",
@@ -1097,7 +1097,7 @@ $ cat fisico.c
           texto: `<p>Para abrir <code>/home/daniel/arq1</code>, o núcleo percorre o caminho <b>nível a nível</b>: em cada diretório, lê o
             <b>i-node</b>, <b>verifica a permissão</b> de travessia e lê a <b>tabela de entradas</b> para achar o próximo nome.
             Com o cache vazio, são 2 leituras por diretório (i-node + conteúdo) e, no fim, o i-node do arquivo.</p>
-            <p>O <b>cache de resolução de nomes</b> guarda pares <b>caminho → i-node</b> recentes numa tabela hash com substituição <b>LRU</b>.
+            <p>O <b>cache de resolução de nomes</b> guarda pares <b>caminho → i-node</b> recentes num modelo didático de tabela hash com substituição <b>LRU</b>. O dcache real do Linux organiza dentries e tem regras próprias de recuperação.
             Ao encontrar um <b>link simbólico</b> no meio do caminho, o núcleo lê o caminho guardado nele e resolve de novo.</p>`
         },
         {
@@ -1110,11 +1110,11 @@ $ cat fisico.c
         },
         {
           tipo: "multipla",
-          pergunta: "Qual política de substituição o cache de resolução de nomes usa?",
+          pergunta: "No modelo didático desta atividade, qual política retira do cache os nomes usados há mais tempo?",
           opcoes: ["FIFO", "LRU", "Aleatória", "Ótima"],
           correta: 1,
           dica: "A mesma ideia da substituição de páginas da Trilha 3.",
-          explicacao: "Os caminhos usados há mais tempo saem primeiro: os diretórios que você está usando agora tendem a ser usados de novo (localidade)."
+          explicacao: "Neste modelo usamos LRU. Caches reais de nomes mantêm estruturas e regras próprias; no Linux, o dcache organiza dentries e a recuperação envolve mecanismos do kernel. LRU não é uma especificação universal de resolução de nomes."
         }
       ]
     }

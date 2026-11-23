@@ -75,7 +75,7 @@ O espaço lógico continua **linear e unidimensional**, mas é dividido internam
 
 **Complementos do livro (14.7):**
 - **Flags de status e controle** em cada entrada: *presença* (página na RAM), *proteção* (leitura/escrita/execução), *referência/acesso* (bit R), *modificação/dirty* (bit M), *usuário/núcleo*, entre outros.
-- **Tabelas multiníveis:** dividem a tabela em níveis (ex.: 2 níveis em 32 bits, 4 níveis no x86-64) para não ocupar memória com faixas não usadas.
+- **Tabelas multiníveis:** dividem a tabela em níveis (ex.: 2 níveis em 32 bits, 4 níveis no x86-64 clássico ou 5 quando suportados e habilitados) para não ocupar memória com faixas não usadas.
 - **TLB (*Translation Lookaside Buffer*):** cache de traduções recentes dentro da MMU; evita acessar a tabela na RAM a cada referência.
 
 ### Comparação das organizações
@@ -108,7 +108,7 @@ Na maioria dos sistemas, a **parte inicial** dos endereços virtuais é do **pro
 
 ### A memória de um processo
 Cada processo é uma **"cápsula" de memória isolada** — área exclusiva que só ele e o núcleo acessam. Contém: código binário do programa; variáveis; bibliotecas; buffers; **pilha (stack)**; dados dinâmicos (**heap**); entre outros.
-Seções típicas (de endereços baixos para altos): **TEXT** (código, só leitura/execução) → **DATA** (variáveis inicializadas) → **BSS** (variáveis não inicializadas) → **HEAP** (cresce para cima) → … espaço livre … → **STACK** (cresce para baixo). Bibliotecas dinâmicas e áreas mapeadas ficam entre heap e pilha. (No Linux: `cat /proc/<pid>/maps` ou `pmap`.)
+Seções típicas (de endereços baixos para altos): **TEXT** (código, só leitura/execução) → **DATA** (variáveis inicializadas) → **BSS** (variáveis sem inicializador ou zeradas no GCC/ELF usual) → **HEAP** (cresce para cima) → … espaço livre … → **STACK** (cresce para baixo). Bibliotecas dinâmicas e áreas mapeadas ficam entre heap e pilha. (No Linux: `cat /proc/<pid>/maps` ou `pmap`.)
 
 ### Alocação de variáveis
 Variáveis são espaços de memória **reservados e nomeados** — ex.: `int soma` em C reserva 4 bytes chamados `soma`. Em C/C++ há três abordagens:
@@ -116,7 +116,7 @@ Variáveis são espaços de memória **reservados e nomeados** — ex.: `int som
 - **Automática:** criada ao **entrar em uma função** e destruída ao sair; variáveis **locais** e parâmetros → **pilha** (*stack frame*).
 - **Dinâmica:** solicitada **explicitamente** durante a execução (`malloc`/`free` em C, `new`/`delete` em C++); fica no **heap**; o programador libera (ou um coletor de lixo, em Java/Python). Esquecer de liberar → *memory leak*.
 ```c
-int total = 0;               // estática (DATA)
+int total = 7;               // estática (DATA no GCC/ELF usual)
 void f(int n) {              // n: automática (pilha)
   int i;                     // automática (pilha)
   static int chamadas = 0;   // estática (DATA)
@@ -228,7 +228,7 @@ Os mecanismos de memória virtual permitem mover partes **ociosas** da memória 
 ### Mecanismo da paginação em disco
 Páginas ociosas vão para uma **área de troca** (*swap*) no disco; o **núcleo** faz a transferência e escolhe as vítimas por **algoritmos de substituição**. Para cada página levada ao disco, a tabela de páginas é ajustada: o **flag de presença** é desligado e registra-se a **posição no disco** em vez do quadro.
 
-**Page fault (falta de página):** ao acessar uma página, a MMU verifica se ela está na RAM; se sim, acessa o endereço físico; se não, gera uma **interrupção de falta de página**, desviando para o SO, que:
+**Page fault (falta de página):** exceção síncrona causada por tradução inválida ou violação de acesso. Pode envolver proteção, COW, alocação sob demanda ou page-in; nem toda falta exige disco. No caso de uma página válida retirada da RAM, o SO:
 1) verifica se o acesso é válido; 2) escolhe um quadro livre (ou libera um, salvando a vítima no disco se modificada); 3) lê a página do disco para o quadro; 4) atualiza a tabela de páginas; 5) reexecuta a instrução que causou a falta. (Enquanto isso, o processo fica suspenso.)
 
 ### Eficiência
@@ -260,7 +260,7 @@ Evolução (quadros após cada falta): 7 | 7,0 | 7,0,1 | 2 entra (sai 7) | 3 ent
 
 **RANDOM:** escolhe a vítima **aleatoriamente**. Útil quando LRU e FIFO vão mal, como em padrões de acesso **fortemente sequenciais** (varredura cíclica maior que a memória); alguns SOs antigos o usavam nessas situações.
 
-**Comparação (Figura 17.4/17.5):** para qualquer número de quadros, OPT ≤ LRU ≤ FIFO em faltas, na maioria das cargas; com muitos quadros, todos convergem.
+**Comparação:** OPT minimiza as faltas para uma cadeia conhecida. Não há uma ordem universal entre LRU e FIFO; resultados dependem da cadeia e da quantidade de quadros. Os números do exemplo do livro não devem virar garantia para qualquer carga.
 
 ### Aproximações do LRU
 O LRU completo é pouco usado: exigiria registrar a data de **cada** acesso à memória — difícil em software e caro em hardware. Os SOs reais usam aproximações baseadas nos bits **R** (referência) e **M** (modificação) mantidos pela MMU.
@@ -288,13 +288,13 @@ A RAM não é suficiente para os **conjuntos de trabalho** de todos os processos
 ### Algumas soluções atuais
 - **LIRS (*Low Inter-reference Recency Set*):** considera o intervalo entre reusos (recência de reutilização) para superar limitações do LRU — "Qual é o intervalo entre os acessos dessa página?"
 - **ARC (*Adaptive Replacement Cache*):** combina **recência e frequência** e se adapta ao padrão de acesso — "Devo preservar o que foi usado recentemente ou o que é reutilizado frequentemente?" (usado no ZFS).
-- **Multi-Gen LRU (MGLRU):** abordagem recente do **Linux** que organiza páginas em **gerações** conforme o histórico de acesso, melhorando a recuperação de memória.
+- **Multi-Gen LRU (MGLRU):** alternativa de recuperação por gerações no Linux, dependente da configuração de compilação e habilitação em execução; não é universal em todo kernel recente.
 
 > 📖 **Maziero, cap. 17 "Paginação em disco" (p. 205–225):** estendendo a RAM (17.1), mecanismo, eficiência e critérios (17.2), algoritmos clássicos — cadeia de referências, FIFO, Ótimo, LRU, RANDOM e comparação (17.3, p. 210–215), aproximações do LRU — segunda chance, NRU, envelhecimento (17.4, p. 215–218), conjunto de trabalho (17.5), anomalia de Belady (17.6, p. 220), thrashing (17.7, p. 221). Tópicos extras no cap. 18: compartilhamento de memória, **copy-on-write** e arquivos mapeados em memória.
 
 ### Desafios da fase 3.4
 1. **Qual técnica move processos inteiros para o disco?** a) Paginação · **b) Swapping** · c) Overlay · d) Slab
-2. **Quem gera a interrupção de falta de página?** → A MMU.
+2. **Quem gera a exceção de falta de página?** → A MMU.
 3. **Quantas faltas o algoritmo ótimo gera na cadeia do livro com 3 quadros? E o LRU? E o FIFO?** → 9, 12 e 15.
 4. **Por que o algoritmo ótimo não é implementável?** → Exige conhecer os acessos futuros.
 5. **No NRU, qual página sai primeiro?** → Nível 0 (R = 0, M = 0).
@@ -303,3 +303,9 @@ A RAM não é suficiente para os **conjuntos de trabalho** de todos os processos
 8. **Qual família de algoritmos não sofre Belady?** → Algoritmos de pilha (OPT, LRU).
 9. **O que caracteriza o thrashing?** → O sistema passa mais tempo paginando do que executando.
 10. **Por que páginas de código são vítimas "baratas"?** → Não são modificadas; podem ser relidas do executável sem salvar.
+
+### Precisões da revisão de 23 de novembro de 2026
+
+No GCC/ELF usual, globais zeradas também podem ir para BSS; a disposição depende do compilador e opções. Nomes R/M para referência/modificação são genéricos: no RISC-V, A/D têm essas funções, enquanto R é leitura. V indica validade da tradução, não a causa de uma falta. free permite reutilização pelo alocador, mas não garante devolução imediata de RAM ao kernel; malloc pode falhar quando recursos se esgotam.
+
+Revisão técnica de 23/11/2026: [correções, fontes e limites dos exemplos](../revisao-conteudo-2026-11-23.md).

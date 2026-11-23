@@ -8,7 +8,7 @@
    Substitua a trilha 5 anterior: NÃO carregue duas versões ao mesmo tempo.
    Novos IDs es-v2-* iniciam progresso próprio para as novas etapas.
    Esquemas e saídas são didáticos, não resultados reais do grupo.
-   Campos referencia e pergunta_guia são metadados (o motor os ignora).
+   Campos referencia e pergunta_guia são exibidos em Referências da etapa pelo motor.
    ========================================================= */
 
 TRILHAS.push({

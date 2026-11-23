@@ -59,7 +59,7 @@ SO interrompe A → salva o contexto de A → carrega o contexto de B → B reto
 - `exec()` — **substitui** o programa em execução por outro;
 - entre `fork` e `exec` é possível **redirecionar entrada e saída**;
 - `wait()` — o pai aguarda o término do filho; o filho termina com `exit()`.
-- A memória do filho é inicialmente uma cópia da do pai (compartilhada até ser modificada — *copy-on-write*). Ambos acessam os mesmos recursos do núcleo, mas executam em áreas de memória distintas.
+- A semântica de fork é de memória privada. Linux normalmente usa copy-on-write; a base xv6-labs-2024 utilizada no grupo copia as páginas em uvmcopy(). A estratégia de cópia não é uma garantia universal da API.
 
 Fluxo (figura do slide): `pid = fork()` → pai (pid > 0) chama `wait()` e reassume quando o filho termina; filho (pid == 0) chama `exec()` e depois `exit()`.
 
@@ -178,7 +178,7 @@ Existência de múltiplas threads em um mesmo processo.
 - *Desvantagens:* **bloqueante** — se uma thread pede leitura do teclado, a thread de núcleo é suspensa e **todas** as threads do processo bloqueiam; sem **paralelismo** entre threads do mesmo processo; distribuição de processamento injusta (núcleo divide o tempo entre threads de núcleo, não de usuário).
 
 **1:1** — cada thread de usuário tem sua thread de núcleo.
-- *Vantagens:* não bloqueante (só a thread que pediu E/S é suspensa); várias threads do mesmo processo executam ao mesmo tempo. Modelo mais frequente: Windows NT e descendentes, maioria dos UNIX (Linux).
+- *Vantagens:* em 1:1, uma chamada bloqueante suspende a thread correspondente, sem obrigar as demais a bloquear. Várias threads do processo podem executar em paralelo se houver CPUs disponíveis. É o modelo usado, por exemplo, no Linux e no Windows atuais.
 - *Desvantagens:* pouco escalável — muitas threads impõem carga elevada ao núcleo (grandes servidores web, simulações).
 
 **N:M** — N threads de usuário sobre M ≤ N threads de núcleo.
@@ -206,7 +206,7 @@ No passado cada SO tinha sua interface → problemas de portabilidade. Em **1995
 | `pthread_create` | cria uma nova thread |
 | `pthread_exit` | encerra a thread atual |
 | `pthread_join` | aguarda o término de outra thread |
-| `pthread_yield` | cede voluntariamente a CPU |
+| `sched_yield` | cede CPU conforme a política; não substitui sincronização. `pthread_yield` é extensão obsoleta desde glibc 2.34 |
 | `pthread_attr_init` / `pthread_attr_destroy` | cria/remove estrutura de atributos da thread |
 
 Exemplo do slide (compilar com `gcc exemplo.c -o exemplo -lpthread`):
@@ -293,9 +293,9 @@ Threads compartilham dados → resultados imprevisíveis:
 > 📖 **Maziero, cap. 8, seção 8.3 (p. 94–101).**
 
 ### Mecanismos de comunicação
-**Pipes (UNIX):** canal **unidirecional** entre dois processos, ligando stdout de um ao stdin de outro. Ex.: `who | grep marcos | sort`. Classificação: local, **1:1**, síncrono, **orientado a fluxo**, confiável, capacidade finita (64 KB no Linux); usado com `read`/`write`. Pipes nomeados (**FIFOs**) persistem até serem removidos: `mkfifo /tmp/pipe`, `date > /tmp/pipe`, `cat < /tmp/pipe`.
+**Pipes (UNIX):** canais unidirecionais de bytes, com capacidade finita. No exemplo, ligam um produtor a um consumidor, mas descritores podem ser compartilhados entre vários leitores/escritores. Há modo não bloqueante; capacidade no Linux é configurável e pode ser consultada com F_GETPIPE_SZ. 64 KiB corresponde ao exemplo de 16 páginas de 4 KiB; PIPE_BUF define atomicidade de escrita, não capacidade. FIFOs têm nome no sistema de arquivos, mas seus dados não são armazenados como um arquivo comum.
 
-**Sockets (redes):** extremidades de comunicação identificadas por endereço IP + porta; permitem comunicação entre processos locais ou remotos, por fluxo (TCP — confiável, orientado a conexão) ou por datagramas (UDP — mensagens, não confiável).
+**Sockets:** extremidades de comunicação local ou remota. Sockets de Internet usam endereços como IP e porta; AF_UNIX oferece comunicação local com outro formato de endereço. TCP fornece fluxo confiável e orientado a conexão; UDP oferece datagramas sem garantia de entrega.
 
 **Filas de mensagens:** implementam *mailbox*; N:M; confiáveis; orientadas a mensagens; capacidade finita (POSIX: `mq_open`, `mq_send`, `mq_receive`, `mq_close`, `mq_unlink`).
 
@@ -383,7 +383,7 @@ Elementos: **intenção de entrar**, **variável de vez**, **espera condicional*
 - `down(s)` (P, *wait*): decrementa; se ficar negativo, a tarefa é **suspensa** na fila (sem espera ocupada);
 - `up(s)` (V, *signal*): incrementa; se houver tarefas esperando, **acorda** uma.
 Semáforo iniciado em 1 = exclusão mútua (`down(mutex)` → região crítica → `up(mutex)`); iniciado em N = controle de N recursos.
-**Mutex:** semáforo binário simplificado (`lock`/`unlock`; ex.: `pthread_mutex_lock`).
+- **Mutex:** trava de exclusão com propriedade: quem adquire deve liberar. Um semáforo binário pode ser usado para sinalização entre tarefas e não tem o mesmo contrato. POSIX: pthread_mutex_lock/unlock.
 **Variável de condição:** permite esperar uma condição dentro de uma seção protegida (`wait(c, m)`, `notify(c)`/`signal`, `broadcast`).
 
 ### Por que monitores?
@@ -534,14 +534,16 @@ Sequência: t2[0–2] t3[2–3] t4[3–4] t3[4–7] t5[7–9] t1[9–14] → **T
 | Tempo total de processamento | 14 | 14 | 14 | 14 | 14 | 14 | 14 |
 
 ### Escalonamento no Linux
-Classes de escalonamento, cada uma com sua fila (*Multiple Feedback Queues*), núcleo 4.16 (2018):
-- **SCHED_DEADLINE:** tempo real periódico com prazos; algoritmo **EDF** (*Earliest Deadline First*).
-- **SCHED_FIFO:** prioridade fixa preemptiva, sem envelhecimento nem quantum (executa até bloquear, chamar `sched_yield()` ou ser preemptada por maior prioridade).
-- **SCHED_RR:** como FIFO + Round-Robin; quantum proporcional à prioridade (10–200 ms).
-- **SCHED_NORMAL/OTHER:** padrão, tarefas interativas; prioridades dinâmicas e RR com quantum variável.
-- **SCHED_BATCH:** como NORMAL, para tarefas CPU-bound, ativadas menos frequentemente.
-- **SCHED_IDLE:** menor prioridade; só executa se não houver mais nada.
-Ordem: DEADLINE > FIFO > RR > NORMAL/BATCH/IDLE. As classes interativas usam o **CFS** (*Completely Fair Scheduler*, prioridades −20 a +19, árvore rubro-negra, O(log n)); as de tempo real têm prioridades 1–99.
+
+Principais políticas de escalonamento; nomes de políticas não devem ser confundidos com uma hierarquia fixa entre todas elas:
+- **SCHED_DEADLINE:** tarefas com requisitos de prazo; usa GEDF e controle de banda. Tem precedência sobre as políticas citadas abaixo.
+- **SCHED_FIFO:** prioridade estática de tempo real, sem quantum; executa até bloquear, ceder ou sofrer preempção por maior prioridade.
+- **SCHED_RR:** também usa prioridade estática de tempo real; acrescenta rotação por quantum entre tarefas de mesma prioridade. Uma RR mais prioritária pode preemptar uma FIFO.
+- **SCHED_OTHER/NORMAL:** política normal; BATCH ajusta o tratamento de cargas em lote e IDLE atende trabalho de baixa prioridade. Não são uma implementação simples de RR de sala de aula.
+
+Nas tarefas de tempo real FIFO/RR, prioridades estáticas normalmente vão de 1 a 99. Nice nas tarefas comuns varia de -20 a 19. A classe justa do Linux iniciou a transição de CFS para **EEVDF no kernel 6.6**. Recursos e detalhes dependem da versão e configuração; os exemplos antigos de kernel 4.16 devem ser lidos como históricos.
+
+Fontes: [EEVDF](https://docs.kernel.org/scheduler/sched-eevdf.html) e [sched(7)](https://man7.org/linux/man-pages/man7/sched.7.html).
 
 ### Multiprocessadores
 - **Afinidade de processador:** manter o processo na mesma CPU para aproveitar o **cache** (figura: partições de CPUs para conjuntos de processos).
@@ -659,7 +661,7 @@ Resolução:
 - **Retroceder tarefas (*rollback*):** desfazer parte da execução até um estado seguro anterior, salvando estados periodicamente (*checkpoints*). Operações de rede ou interação com usuário podem ser impossíveis de desfazer (como "desenviar" um pacote ou um áudio já tocado?).
 
 ### Questões para discussão (do slide)
-- *"Em uma situação de deadlock, o processador está consumindo recurso?"* → Em geral **não**: as tarefas envolvidas estão **bloqueadas** (suspensas) e fora da fila de prontos; a CPU atende outras tarefas ou fica ociosa. Só haveria consumo se a espera fosse **ocupada** (spinlock), caso chamado às vezes de *livelock*.
+- *"Em uma situação de deadlock, o processador está consumindo recurso?"* → Em geral **não**: as tarefas envolvidas estão **bloqueadas** (suspensas) e fora da fila de prontos; a CPU atende outras tarefas ou fica ociosa. Só haveria consumo se a espera fosse **ocupada** (spinlock), o que não o transforma automaticamente em livelock: neste, tarefas continuam agindo sem progresso.
 - *A telinha "Não está respondendo" do Windows é deadlock?* → Não necessariamente: o Windows detecta que a interface **não respondeu às mensagens dentro de um timeout**; isso não prova um deadlock, mas um deadlock pode ser uma das causas.
 
 > 📖 **Maziero, cap. 13 "Impasses" (p. 148–159):** exemplo (13.1), condições (13.2), grafos de alocação (13.3), técnicas de tratamento — prevenção (p. 153), impedimento/banqueiro (p. 154), detecção e resolução (p. 155).
@@ -673,3 +675,13 @@ Resolução:
 6. **Um ciclo no grafo com recursos de instância única indica…** → impasse.
 7. **Rollback exige…** → salvar periodicamente o estado das tarefas.
 8. **As quatro condições presentes garantem deadlock?** → Não (necessárias, não suficientes), salvo com uma instância por recurso.
+
+### Precisões da revisão de 23 de novembro de 2026
+
+- Thread da aplicação não significa fluxo invisível ao SO: em 1:1 há uma entidade correspondente no kernel; em N:1 a biblioteca gerencia fluxos que o kernel não escalona individualmente. Exemplos de Solaris/KSE em N:M são históricos, dependentes da implementação.
+- Peterson pressupõe acessos atômicos e ordenação adequada. Uma tradução C com variáveis comuns ou apenas volatile não preserva automaticamente sua prova. Data races em C têm comportamento indefinido, não apenas incrementos perdidos.
+- Sockets incluem comunicação local AF_UNIX, além de sockets de Internet com IP e porta.
+- Para chegadas 0,1,2,3; durações 8,2,1,3; quantum 2, com chegadas inseridas antes da tarefa preemptada: P1[0–2], P2[2–4], P3[4–5], P1[5–7], P4[7–9], P1[9–11], P4[11–12], P1[12–14]. Esperas 6,1,2,6; média **3,75**. FCFS na mesma carga: **5,75**. Esse exemplo é distinto da tabela de cinco tarefas do Maziero.
+- Semáforo com contador negativo é um modelo abstrato; a API POSIX não precisa expor esse contador. Mutex não é um semáforo binário equivalente em todos os contratos.
+
+Revisão técnica de 23/11/2026: [correções, fontes e limites dos exemplos](../revisao-conteudo-2026-11-23.md).

@@ -308,7 +308,7 @@ close(3)                                = 0
           detalhe: "Decide quem usa cada recurso, quando e por quanto tempo, entre vários programas e usuários.",
           veja: ["máquina estendida(7)"] },
         { termo: "chamada de sistema", secao: "7", resumo: "pedido de um programa ao kernel por um serviço que exige privilégios",
-          detalhe: "O programa prepara os parâmetros e executa uma instrução de trap (ecall, syscall, int 0x80): o processador passa ao modo núcleo, o kernel executa o serviço e retorna ao modo usuário. Categorias: processos, arquivos, dispositivos, informações e comunicação/proteção. O conjunto de chamadas forma a API do SO (POSIX, Win32).",
+          detalhe: "O programa prepara os parâmetros e executa uma instrução de trap (ecall, syscall, int 0x80): o processador passa ao modo núcleo, o kernel executa o serviço e retorna ao modo usuário. Categorias: processos, arquivos, dispositivos, informações e comunicação/proteção. Chamadas de sistema e APIs não são sinônimos: interfaces como POSIX e Win32 também incluem funções de biblioteca e podem combinar vários serviços do kernel.",
           exemplo: "strace ls",
           veja: ["modo núcleo(7)", "fork(2)"] },
         { termo: "modo núcleo", secao: "7", resumo: "nível privilegiado do processador, em que o kernel executa",
@@ -318,13 +318,13 @@ close(3)                                = 0
           detalhe: "Alto desempenho, mas um erro em qualquer componente pode derrubar o sistema inteiro. O Linux é monolítico e modular.",
           veja: ["micronúcleo(7)", "módulos(7)"] },
         { termo: "micronúcleo", secao: "7", resumo: "microkernel: só o essencial no núcleo; o resto em processos de usuário",
-          detalhe: "Modular e confiável, mas a troca de mensagens e de contexto custa desempenho. O Windows NT começou assim e migrou para uma estrutura mais monolítica.",
+          detalhe: "Serviços isolados em modo usuário comunicam-se por mensagens. Há custos de comunicação e benefícios de isolamento; o resultado depende da implementação. O Windows NT combina componentes de usuário e de kernel e não deve ser tratado como um micronúcleo puro.",
           veja: ["monolítico(7)"] },
         { termo: "camadas", secao: "7", resumo: "SO organizado em níveis: cada camada usa a de baixo e serve a de cima",
           detalhe: "Facilita testes e manutenção, mas é difícil definir as camadas e cada chamada atravessa várias delas. Primeiro sistema: THE (Dijkstra, 1968).",
           veja: ["micronúcleo(7)"] },
         { termo: "módulos", secao: "7", resumo: "núcleo que carrega componentes extras na inicialização ou em execução",
-          detalhe: "Usado no Linux, Solaris, macOS e Windows. Como o micronúcleo, tem um núcleo mínimo; mas os módulos se chamam diretamente, sem troca de mensagens, e por isso são mais eficientes.",
+          detalhe: "Componentes podem ser vinculados ao núcleo ou carregados em execução. Modularidade não exige um núcleo mínimo: o Linux é monolítico e modular. Módulos em modo núcleo usam interfaces internas; serviços de um micronúcleo podem executar isolados em modo usuário.",
           exemplo: "lsmod",
           veja: ["monolítico(7)", "micronúcleo(7)"] }
       ],
@@ -446,7 +446,7 @@ close(3)                                = 0
               <li><b>Camadas</b>: cada nível usa o de baixo e serve o de cima (THE, Dijkstra, 1968).</li>
               <li><b>Micronúcleo</b>: só o essencial no kernel; serviços em modo usuário, conversando por <b>mensagens</b>.</li>
               <li><b>Monolítica</b>: quase tudo no núcleo, com chamadas diretas; rápida, mas um erro derruba tudo.</li>
-              <li><b>Módulos</b>: núcleo mínimo que carrega módulos, que se chamam diretamente (Linux, Windows, macOS).</li>
+              <li><b>Módulos</b>: componentes do kernel organizados por interfaces, inclusive módulos carregáveis. Não exige um núcleo mínimo (ex.: Linux monolítico e modular).</li>
               <li><b>Híbridos</b>: a maioria dos SOs reais mistura estruturas.</li>
             </ul>
             <p>Cada arquitetura busca um equilíbrio diferente entre <b>controle, desempenho, segurança e flexibilidade</b>.</p>`
@@ -461,16 +461,16 @@ close(3)                                = 0
         },
         {
           tipo: "multipla",
-          pergunta: "Por que o Windows NT migrou de microkernel para algo mais monolítico?",
+          pergunta: "Qual descrição evita confundir modularidade com micronúcleo?",
           opcoes: [
-            "Por segurança: o microkernel era fácil de invadir",
-            "Por desempenho: o custo da troca de mensagens deixava o sistema lento",
-            "Para rodar programas do MS-DOS",
-            "Porque o microkernel não suportava interface gráfica"
+            "Um kernel modular precisa manter todos os serviços em modo usuário",
+            "Um kernel pode ser monolítico e modular; a organização em módulos não exige um núcleo mínimo",
+            "A presença de módulos elimina qualquer custo de comunicação",
+            "Micronúcleos não conseguem oferecer interfaces gráficas"
           ],
           correta: 1,
-          dica: "Compare o NT com o Windows 95, da mesma época.",
-          explicacao: "O overhead de mensagens e trocas de contexto deixava o NT lento; no NT 4.0, camadas foram movidas para o kernel."
+          dica: "Compare onde os componentes executam e como se comunicam.",
+          explicacao: "Modularidade é uma forma de organizar componentes. Um micronúcleo mantém serviços fora do kernel; um núcleo monolítico modular pode manter esses serviços em modo núcleo. O desempenho depende do projeto e da carga."
         },
         {
           tipo: "multipla",
@@ -485,13 +485,13 @@ close(3)                                = 0
           pergunta: "Qual a diferença entre um núcleo com módulos e um micronúcleo?",
           opcoes: [
             "Módulos não podem ser carregados com o sistema rodando",
-            "Ambos têm núcleo mínimo, mas os módulos se chamam diretamente, sem mensagens, e são mais eficientes",
+            "Módulos podem executar no kernel; num micronúcleo, muitos serviços executam em modo usuário e usam mensagens",
             "O micronúcleo coloca tudo dentro do kernel",
             "Não há diferença"
           ],
           correta: 1,
-          dica: "Os dois começam de um núcleo pequeno. A diferença está em como as partes conversam.",
-          explicacao: "Os módulos rodam no espaço do kernel e se chamam diretamente; no micronúcleo, os serviços trocam mensagens, o que custa desempenho."
+          dica: "Modularidade não define, sozinha, quais serviços ficam em modo usuário.",
+          explicacao: "Módulos carregáveis do kernel usam interfaces internas. Num micronúcleo, muitos serviços usam processos e mensagens. Isso não permite concluir que um modelo será sempre mais eficiente."
         }
       ]
     }
