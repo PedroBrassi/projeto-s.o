@@ -359,6 +359,11 @@
           <span class="estab-box">${estabilidadeHTML()}</span>
         </header>
         ${APRESENTACAO ? navApresentacao() : ""}
+        ${licao.fase.referencia ? `<details class="referencia-fase"><summary>Referências da etapa</summary>
+          ${licao.fase.pergunta_guia ? `<p>${esc(licao.fase.pergunta_guia)}</p>` : ""}
+          <p>${esc(licao.fase.referencia)}</p>
+          <a href="https://wiki.inf.ufpr.br/maziero/doku.php?id=socm:start" target="_blank" rel="noopener noreferrer">Consultar o livro de Maziero</a>
+        </details>` : ""}
         <main class="desafio" id="desafio"></main>
         <footer class="rodape" id="rodape"></footer>
       </div>`;
@@ -407,7 +412,7 @@
 
   function cabecalho(rotulo) {
     const d = licao.atual && licao.atual.d;
-    const lab = d && d.lab ? `<span class="tag-lab" title="Atividade das aulas de laboratório">🧪 ${d.lab}</span>` : "";
+    const lab = d && d.lab ? `<span class="tag-lab" title="Exemplo didático baseado em roteiros de laboratório; não é uma nova execução dos programas citados">🧪 ${d.lab}</span>` : "";
     return `<p class="tag">${lab}${rotulo} · ${Math.min(licao.feitos + 1, licao.total)}/${licao.total}</p>`;
   }
 
@@ -768,7 +773,7 @@
           </label>
         </div>
       </div>
-      <p class="term-ajuda">Digite o comando e aperte <kbd>Enter</kbd>.${xv6 ? " Atalhos de teclado também valem (no celular, use o botão abaixo)." : ""}</p>
+      <p class="term-ajuda">Terminal simulado: saídas cadastradas, sem executar comandos no seu computador. Digite o comando e aperte <kbd>Enter</kbd>.${xv6 ? " Atalhos de teclado também valem (no celular, use o botão abaixo)." : ""}</p>
       ${xv6 ? '<button class="btn sec" id="btn-ctrlp">Ctrl-P</button>' : ""}`;
     rodapePadrao(false);
 
@@ -1129,7 +1134,7 @@
         <p class="ponte-texto">${c.texto}</p>
       </div>`;
     $("#rodape").className = "rodape";
-    $("#rodape").innerHTML = `<span class="ponte-dica">${c.nota ? esc(c.nota) : (ehXv6 ? "Trechos resumidos do xv6-labs-2024, a versão usada no laboratório." : "Mesmo conceito, num SO usado no dia a dia.")}</span>
+    $("#rodape").innerHTML = `<span class="ponte-dica">${c.nota ? esc(c.nota) : (ehXv6 ? "Trechos resumidos ou adaptados do xv6-labs-2024; não são evidências de execução. Consulte a versão e as alterações do laboratório." : "Exemplo didático de Linux: saída ilustrativa. PIDs, datas, versões e disponibilidade variam; não é uma leitura do computador do jogador.")}</span>
       <button class="btn" id="continuar">${passo + 1 < cartoes.length ? "Próximo" : "Concluir etapa"}</button>`;
     $("#continuar").addEventListener("click", () => renderPonte(passo + 1));
     $("#continuar").focus();

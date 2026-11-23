@@ -32,7 +32,7 @@ Informações **sobre** o arquivo, não o conteúdo: **nome, tipo, tamanho, data
 - **Criar:** alocar espaço no dispositivo e definir os atributos (nome, localização, proprietário, permissões, datas).
 - **Abrir:** antes de ler ou escrever, a aplicação pede ao SO para abrir o arquivo. O SO: 1) verifica se o arquivo **existe**; 2) verifica se as **permissões** permitem aquele acesso; 3) **localiza** o conteúdo no dispositivo; 4) cria uma **referência** ao arquivo na memória da aplicação (descritor).
 - **Ler/escrever:** transferem dados entre o arquivo e a memória, a partir da posição corrente.
-- **Fechar:** conclui escritas pendentes e libera as estruturas da abertura.
+- **Fechar:** encerra o descritor; referências podem manter a descrição aberta e não há garantia de persistência no disco.
 - **Remover:** apaga o arquivo e libera seu espaço.
 - **Alterar atributos:** ex.: mudar permissões, dono, nome.
 
@@ -50,7 +50,7 @@ Como usuários e aplicações sabem o que há no arquivo?
 - **Atributos e tipos MIME** (*tipo/subtipo*): `image/png`, `text/html`, `audio/mpeg` — usados na web, e-mail e ambientes gráficos.
 
 ### Arquivos especiais
-**Abstração de dispositivos de E/S:** sistemas UNIX mapeiam dispositivos como arquivos no diretório **`/dev`** — ex.: `/dev/sda1` = primeira partição do primeiro disco SATA. Outros: `/dev/null`, `/dev/random`, `/dev/tty`. Também há abstrações de **comunicação** (pipes nomeados, sockets locais) e **pseudoarquivos** com informações do núcleo (`/proc`, `/sys`). ("Tudo é um arquivo.")
+**Abstração de dispositivos de E/S:** sistemas UNIX mapeiam dispositivos como arquivos no diretório **`/dev`** — ex.: `/dev/sda1` = primeira partição de sda nesse sistema, sem garantir transporte SATA nem identificação física persistente. Outros: `/dev/null`, `/dev/random`, `/dev/tty`. Também há abstrações de **comunicação** (pipes nomeados, sockets locais) e **pseudoarquivos** com informações do núcleo (`/proc`, `/sys`). ("Tudo é um arquivo.")
 
 ### Atividade do slide (com gabarito)
 Indique as afirmações **incorretas** sobre formatos de arquivos:
@@ -98,12 +98,12 @@ Representação lógica de um arquivo **em uso por um processo**: criado na **ab
 
 ### Abertura e fechamento
 **Abertura (passo a passo, livro 23.2.2):** 1) a aplicação pede a abertura (`open(nome, modo)`); 2) o núcleo **localiza** o arquivo resolvendo o caminho nos diretórios; 3) verifica as **permissões** para o modo pedido (leitura, escrita…); 4) cria na memória do núcleo as estruturas do arquivo aberto (cópia do i-node/FCB, **posição corrente**, modo); 5) cria uma entrada na **tabela de arquivos abertos do processo** e devolve o **descritor**; 6) a biblioteca da linguagem envolve esse descritor na referência de alto nível.
-**Fechamento:** ao terminar, o processo pede ao núcleo para fechar: o núcleo **conclui escritas pendentes** e **remove da memória** as estruturas criadas na abertura.
+**Fechamento:** close remove o descritor e a descrição aberta é liberada quando não restarem referências. Não garante persistência dos dados no armazenamento. fclose descarrega buffers da biblioteca, mas requisitos de persistência pedem sincronização apropriada, como fsync/fdatasync, e tratamento de erro.
 
 ### Formas de acesso
 - **Sequencial:** dados lidos/escritos em ordem, do início ao fim, com um **ponteiro de posição** avançando a cada operação. Uso: textos, logs, mídia, cópia de arquivos.
 - **Aleatório (direto):** acessa qualquer posição indicando o **deslocamento** (`lseek`/`fseek`) antes da leitura/escrita. Uso: bancos de dados, arquivos de registros de tamanho fixo, edição de grandes arquivos.
-- **Mapeado em memória:** o arquivo é **associado a uma região do espaço de endereçamento** (`mmap`); ler/escrever na memória lê/escreve no arquivo, via mecanismo de paginação. Uso: carregar executáveis e bibliotecas, arquivos grandes com acesso frequente, compartilhamento entre processos.
+- **Mapeado em memória:** o arquivo é **associado a uma região do espaço de endereçamento** (`mmap`); em MAP_SHARED, alterações podem ser propagadas ao arquivo; em MAP_PRIVATE, são privadas e não são gravadas no arquivo. A sincronização depende do contrato do mapeamento. Uso: carregar executáveis e bibliotecas, arquivos grandes com acesso frequente, compartilhamento entre processos.
 - **Indexado:** acesso por **chave**, com um **índice** que localiza os registros (comum em mainframes; hoje feito por bibliotecas e SGBDs). Uso: bases de dados com buscas por chave.
 
 ### Compartilhamento (complemento do livro, 23.4)
@@ -128,7 +128,7 @@ Descritor de arquivo · interface em dois níveis · formas de acesso · control
 3. **Um processo abriu o arquivo e depois o dono retirou sua permissão. O processo ainda lê?** → Sim, enquanto mantiver o arquivo aberto.
 4. **Qual forma de acesso usa `mmap`?** → Mapeado em memória.
 5. **Para um banco de dados com registros de tamanho fixo, qual forma é mais adequada?** → Aleatório (direto).
-6. **O que o fechamento garante?** → Concluir escritas pendentes e liberar as estruturas do núcleo.
+6. **O que close garante?** → Encerramento do descritor; não garante que dados em cache tenham sido persistidos no disco.
 
 ---
 
@@ -147,11 +147,11 @@ Do mais baixo ao mais alto: **dispositivo físico** (disco, SSD) → **controlad
 ### Espaços de armazenamento — discos e partições
 - O disco é visto como um **grande vetor de blocos** de tamanho fixo.
 - **MBR** (*Master Boot Record*): tabela de partições e código de boot do disco (no primeiro bloco). *(Discos modernos usam GPT.)*
-- **VBR** (*Volume Boot Record*): bloco de inicialização de cada partição.
+- **VBR** (*Volume Boot Record*): setor de boot de volume em formatos que o utilizam; não é uma estrutura universal de todo sistema de arquivos.
 - Cada **volume** (partição) é formatado com seu próprio sistema de arquivos.
 
 ### Montagem de volumes
-**Montar** = ler o bloco de inicialização, criar as estruturas em memória e **definir um ponto de acesso**.
+**Montar** = associar um sistema de arquivos a um ponto de acesso e consultar suas estruturas próprias, como o superbloco do Ext4. Isso não depende universalmente de um VBR.
 - **UNIX:** volumes viram **subdiretórios** da árvore única (`mount /dev/sdb1 /mnt/pendrive`).
 - **Windows:** cada volume vira um **disco lógico** (C:, D:).
 
@@ -163,7 +163,7 @@ Do mais baixo ao mais alto: **dispositivo físico** (disco, SSD) → **controlad
 - **Read-ahead:** lê antecipadamente os blocos seguintes (acesso sequencial);
 - **Write-through:** escrita **síncrona** no disco — segura, sem ganho de desempenho na escrita;
 - **Write-back:** escreve no cache e libera o processo; grava depois — rápido, mas pode **perder dados em um crash**.
-Em geral: **dados usam write-back; metadados usam write-through** (consistência).
+As políticas dependem do sistema de arquivos e das opções. No Ext4, journal e commits coordenam metadados; não há write-through universal. Os modos ordered, writeback e journal têm garantias distintas.
 
 ### Alocação de arquivos
 **Problema:** dispor conteúdo e metadados nos blocos lógicos. Critérios: **rapidez**, **robustez** e **flexibilidade**. O **FCB** (*File Control Block*) guarda metadados e a localização do conteúdo.
@@ -172,7 +172,7 @@ Em geral: **dados usam write-back; metadados usam write-through** (consistência
 - **Encadeada simples:** cada bloco guarda **dados e um ponteiro** para o próximo. Sem fragmentação externa; arquivo cresce livremente. Acesso aleatório **lento** (para o bloco n é preciso ler os n − 1 anteriores); um **bloco defeituoso** torna inacessíveis os seguintes.
 - **Encadeada com FAT:** os ponteiros saem dos blocos e vão para uma **tabela** (*File Allocation Table*), mantida em memória. Mantém a flexibilidade e **acelera** o acesso aleatório. A FAT é dado **crítico** — cópias ficam na área reservada. Usada em **FAT12/16/32**, pendrives e câmeras.
 - **Indexada simples:** cada arquivo tem um **i-node** com atributos e um **índice** de blocos. Acesso sequencial e aleatório rápidos. Mas o i-node tem **tamanho fixo** (limita o tamanho do arquivo) e a **tabela de i-nodes** limita o **número** de arquivos.
-- **Indexada multinível:** ponteiros **indiretos** apontam para blocos com mais ponteiros. **Ext2/3/4:** **12 ponteiros diretos, 1 indireto, 1 duplo indireto e 1 triplo indireto**. Com blocos de **4 KB**: arquivos de até **≈ 4 TB** (limite prático do i-node). Blocos no fim de arquivos grandes exigem **até 3 leituras extras**.
+- **Indexada multinível:** ponteiros **indiretos** apontam para blocos com mais ponteiros. **Mapa tradicional do Ext2/3:** **12 ponteiros diretos, 1 indireto, 1 duplo indireto e 1 triplo indireto**. Com blocos de **4 KB**: arquivos de até **≈ 4 TB** (limite prático do i-node). Blocos no fim de arquivos grandes exigem **até 3 leituras extras**.
   *Cálculo:* com blocos de 4 KB e ponteiros de 4 B, cada bloco de índice tem 1024 ponteiros: diretos = 12 × 4 KB = 48 KB; indireto = 1024 × 4 KB = 4 MB; duplo = 1024² × 4 KB = 4 GB; triplo = 1024³ × 4 KB = 4 TB.
 - **Por extensões (extents):** extensão = grupo de blocos **contíguos**; para cada uma guarda-se **bloco lógico inicial, bloco físico inicial e quantidade**. Combina a **economia** da contígua com a **flexibilidade** da indexada. Usada em **NTFS, HFS, Ext4 e ZFS**.
 
@@ -200,7 +200,7 @@ Em geral: **dados usam write-back; metadados usam write-through** (consistência
 
 ### Exemplo: Ext4
 Sistema de arquivos mais usado no Linux. **Journaling** e **checksum de metadados**; alocação **indexada multinível e por extensões**; espaço livre controlado por **bitmaps de blocos e de i-nodes**.
-Estrutura: o volume é dividido em **grupos de blocos**; cada grupo tem cópia do **superbloco** (parâmetros do volume), **descritores de grupo**, **bitmap de blocos**, **bitmap de i-nodes**, **tabela de i-nodes** e **blocos de dados**.
+Estrutura: o volume é dividido em **grupos de blocos**; a distribuição inclui bitmaps, tabelas de i-nodes e dados; somente alguns grupos podem ter cópias do superbloco e descritores. Recursos sparse_super e flex_bg afetam a disposição.
 
 ### Resumo
 Dados e metadados · blocos e caching · estratégias de alocação · gestão do espaço livre · consistência após falhas.
@@ -213,7 +213,7 @@ Dados e metadados · blocos e caching · estratégias de alocação · gestão d
 
 ### Desafios da fase 4.3
 1. **Qual alocação precisa ler n − 1 blocos para chegar ao bloco n?** a) Contígua · **b) Encadeada simples** · c) Indexada · d) Extensões
-2. **Ext4 usa quantos ponteiros diretos no i-node?** → 12 (+ 1 indireto, 1 duplo e 1 triplo).
+2. **Quantos diretos há no mapa tradicional Ext2/3?** → 12 (+ 1 indireto, 1 duplo e 1 triplo). Ext4 normalmente usa árvores de extensões, conforme a flag do inode.
 3. **Write-back é mais rápido, mas…** → pode perder dados em um crash.
 4. **O que o journaling registra antes de alterar o disco?** → As operações pendentes (em geral, de metadados).
 5. **Quais sistemas usam copy-on-write?** → ZFS e BTRFS.
@@ -242,13 +242,13 @@ Dados e metadados · blocos e caching · estratégias de alocação · gestão d
 - **Direta:** só o nome, no diretório de trabalho (`index.html`);
 - **Absoluta:** a partir da raiz (`/usr/local/share/fortunes/brasil.dat`);
 - **Relativa:** a partir do diretório de trabalho (`../../docs/proj1.pdf`);
-- **Caminho canônico:** o caminho absoluto **mais curto** (sem `.`, `..` ou atalhos).
+- **Caminho canônico:** absoluto normalizado após resolver componentes e links simbólicos. Não é o menor nome entre todos os hard links. Nos exercícios textuais de normalização, supõe-se ausência de links simbólicos.
 *Exemplo:* diretório de trabalho `/home/ana/so/aula1`; o relativo `../../docs/proj1.pdf` corresponde ao absoluto `/home/ana/docs/proj1.pdf`.
 
 ### Implementação de diretórios
 **Diretório é uma tabela:** um diretório é um **arquivo cujo conteúdo é uma tabela de entradas**. Cada entrada: **nome, tipo e localização** (número do i-node ou bloco inicial). O diretório **não contém** os arquivos, apenas os **relaciona**. Entradas especiais: **`.`** (o próprio diretório) e **`..`** (o pai).
 
-**Busca nas entradas:** tabela simples (MS-DOS, Ext2) → **busca linear, O(n)**. **Ext4, ZFS e NTFS** usam **hashes e árvores** (ex.: árvores B), com busca mais rápida. A posição do **diretório raiz** fica registrada no **VBR**.
+**Busca nas entradas:** tabelas simples podem exigir busca linear; Ext4, ZFS e NTFS usam índices próprios. A localização da raiz depende do sistema de arquivos: por exemplo, o Ext4 usa inode 2 e seus metadados próprios, não uma regra universal de VBR.
 
 ### Atalhos (links)
 Referências **indiretas** a um arquivo ou diretório: **uma só cópia dos dados, vários caminhos** até ela. Ex.: `libcrypt.so → /lib/x86_64-linux-gnu/libcrypt.so.1`.
@@ -258,7 +258,7 @@ Referências **indiretas** a um arquivo ou diretório: **uma só cópia dos dado
 | O que guarda | o **caminho** do alvo (é um pequeno arquivo especial) | é outra **entrada de diretório** apontando para o **mesmo i-node** |
 | Outro volume? | sim | **não**, só no mesmo volume |
 | Diretórios? | sim | **nunca** para diretórios |
-| Se o alvo for movido/removido | o atalho fica **quebrado** | o conteúdo continua acessível; só some quando o contador de links do i-node chega a 0 |
+| Se o alvo for movido/removido | o atalho fica **quebrado** | o conteúdo continua acessível; pode permanecer mesmo com zero links enquanto houver descritores ou mapeamentos que o mantenham em uso |
 | Comando UNIX | `ln -s alvo atalho` | `ln alvo atalho` |
 (No Windows: atalhos `.lnk` da interface, links simbólicos e *hard links* do NTFS — `mklink`.)
 
@@ -272,7 +272,7 @@ Diretórios e hierarquia · caminhos absolutos e relativos · diretório como ta
 
 ### Atividade do slide (com gabarito)
 1. *Tipos de referência a arquivos:* direta (nome no diretório de trabalho), absoluta (a partir da raiz), relativa (a partir do diretório de trabalho, com `.`/`..`) e canônica (absoluta mais curta).
-2. *Dois tipos de atalho:* simbólico (guarda o caminho do alvo; pode cruzar volumes e apontar para diretórios; quebra se o alvo sumir) e físico (nova entrada para o mesmo i-node; só no mesmo volume, nunca para diretórios; conteúdo persiste enquanto houver links).
+2. *Dois tipos de atalho:* simbólico (guarda o caminho do alvo; pode cruzar volumes e apontar para diretórios; quebra se o alvo sumir) e físico (nova entrada para o mesmo i-node; só no mesmo volume, nunca para diretórios; conteúdo persiste enquanto houver links ou referências abertas que mantenham o arquivo em uso).
 3. *Acessos a disco para localizar `/home/aluno/marcos/so/projetos/hello.c` com cache vazio:* para cada diretório do caminho — `/`, `home`, `aluno`, `marcos`, `so`, `projetos` — lê-se o **i-node** e o **bloco de conteúdo** (tabela de entradas): 6 × 2 = **12 leituras**, verificando permissões a cada nível; por fim, lê-se o **i-node de `hello.c`** → **13 leituras** no total (supondo cada diretório em um único bloco).
 
 > 📖 **Maziero, cap. 25 "Diretórios e atalhos" (p. 337–347):** diretórios (25.1), caminhos de acesso (25.2, p. 339), implementação (25.3, p. 340), atalhos (25.4, p. 341), implementação de atalhos (25.5, p. 342), tradução dos caminhos e cache (25.6, p. 344).
@@ -283,5 +283,15 @@ Diretórios e hierarquia · caminhos absolutos e relativos · diretório como ta
 3. **Hard link pode apontar para outro volume?** → Não.
 4. **Apaguei o alvo de um soft link. E agora?** → O atalho fica quebrado.
 5. **Que estrutura acelera a busca em diretórios no Ext4/NTFS?** → Hashes e árvores.
-6. **O cache de resolução de nomes usa qual política de substituição?** → LRU.
+6. **Qual política aparece no modelo didático de cache de resolução de nomes?** → LRU; não é uma garantia universal sobre o dcache do Linux.
 7. **Quantas leituras de disco para resolver `/home/daniel` com cache vazio?** → 4 (i-node e conteúdo de `/` e de `home`), mais o i-node de `daniel`.
+
+### Precisões da revisão de 23 de novembro de 2026
+
+- Metadados como dono, permissões e endereçamento ficam no inode; o nome fica na entrada do diretório. Mapas de espaço livre são metadados gerais do sistema de arquivos.
+- O Ext4 normalmente usa árvores de extensões quando o inode tem essa flag; o mapa de 12 diretos e indiretos é o tradicional Ext2/3, também possível como formato legado no Ext4. Nem todo grupo tem cópia do superbloco; sparse_super e flex_bg afetam a disposição.
+- Após remover o último nome, descritores ou mapeamentos ainda podem manter o arquivo em uso. A liberação não depende apenas de nlink chegar a zero.
+- Montagem consulta estruturas específicas, como o superbloco do Ext4; também existe para sistemas sem dispositivo persistente. Windows pode montar volumes em pastas e caminhos de volume, além de letras.
+- O cache hash/LRU usado na explicação é um modelo didático; dcache e recuperação de dentries no Linux não são uma garantia universal de LRU. Referências e saídas de aula são exemplos, não testes realizados no computador do jogador.
+
+Revisão técnica de 23/11/2026: [correções, fontes e limites dos exemplos](../revisao-conteudo-2026-11-23.md).

@@ -31,7 +31,7 @@ projeto-s.o/
 
 | Entrega | Situação | Local |
 |---|---|---|
-| KernelPlay | Implementado e publicado; revisão funcional conjunta pendente | [Site e documentação](kernelPlay/README.md) |
+| KernelPlay | Implementado; conteúdo revisado em 23/11/2026; revisão funcional conjunta pendente | [Site e documentação](kernelPlay/README.md) |
 | Justificativa técnica | Word, Markdown e PDF gerados; revisão do grupo e publicação no Padlet pendentes | [Documentos](docs/justificativa/README.md) |
 | Demonstração no xv6 | Processos (`fork`/`wait`/`exit`) e threads de usuário (`uthread`, modelo N:1) implementados e executados no `xv6-labs-2024` (`util@79e8024`), com patch reproduzido em cópia limpa; reprodução pela equipe de testes e publicação no Padlet pendentes | [Roteiro, código e evidências](xv6-demo/README.md) |
 | SO atual | Primeira versão dos slides sobre Linux produzida no Canva (15 slides); correções, referências, comparação com KernelPlay e xv6 e envio da fonte editável + PDF pendentes | [Orientações](apresentacao/README.md) |
@@ -71,3 +71,7 @@ Leia [como contribuir](CONTRIBUTING.md) e registre a divisão em [planejamento](
 
 - xv6: MIT PDOS, licença MIT — https://github.com/mit-pdos/xv6-riscv
 - Mascote: ilustrações geradas com IA a partir da proposta visual do grupo.
+
+## Revisão de conteúdo em 23/11/2026
+
+As correções conceituais e os exemplos revisados estão descritos em [revisão do conteúdo](docs/revisao-conteudo-2026-11-23.md). Os documentos de desenvolvimento e justificativa de 19/11 identificam uma versão histórica; o estado atual da demonstração está em [xv6-demo](xv6-demo/README.md).

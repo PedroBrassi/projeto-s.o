@@ -133,3 +133,5 @@ Todas as cores estão nas variáveis do topo do `css/estilo.css` (`--marca`, `--
 
 ## Teclado
 `1`–`4` escolhem a opção; `Enter` verifica ou continua.
+
+Revisão de conceitos e gabaritos de 23/11/2026: [alterações, fontes e escopo](../docs/revisao-conteudo-2026-11-23.md). Os documentos de 19/11 preservam a versão original identificada.

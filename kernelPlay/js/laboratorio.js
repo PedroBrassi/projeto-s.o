@@ -267,7 +267,7 @@ const LABORATORIO = (function () {
       ]);
       return {
         tipo: "multipla",
-        pergunta: `O diretório de trabalho é <code>${junta(cwd)}</code>. A qual caminho absoluto corresponde <code>${rel}</code>?`,
+        pergunta: `Considere um cenário sem links simbólicos. O diretório de trabalho é <code>${junta(cwd)}</code>. A qual caminho absoluto corresponde <code>${rel}</code>?`,
         ...o,
         dica: "Cada .. sobe um nível a partir do diretório de trabalho.",
         explicacao: `Saindo de ${junta(cwd)}, ${sobe} × .. sobe até ${junta(cwd.slice(0, cwd.length - sobe))}; depois entra em ${desce.join("/")}: ${certo}.`
@@ -287,9 +287,9 @@ const LABORATORIO = (function () {
     ]);
     return {
       tipo: "multipla",
-      pergunta: `Qual é o caminho canônico de <code>${junta(sujo)}</code>?`,
+      pergunta: `Sem links simbólicos neste cenário, normalize o caminho absoluto <code>${junta(sujo)}</code>.`,
       ...o,
-      dica: "O canônico é o absoluto mais curto: tire os . e cancele cada .. com o nome anterior.",
+      dica: "Neste cenário sem links simbólicos, retire . e resolva cada .. com o componente anterior. Não é uma busca pelo menor nome entre hard links.",
       explicacao: `O "." não muda nada, e "${extra}/.." entra e sai do mesmo diretório. Sobra ${certo}.`
     };
   }
