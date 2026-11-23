@@ -1,0 +1,104 @@
+Script started on 2026-11-23 07:22:55-03:00 [COMMAND="bash xv6.sh" TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="156" LINES="41"]
+>> Pasta de trabalho: /mnt/c/Users/pedro/Desktop/development/projeto-s.o/xv6-desenvolvimento   (no container: /lab)
+Ambiente xv6 pronto. Digite xv6-ajuda para ver os comandos.
+(xv6) /lab/xv6-labs-2024 $ make qemu
+qemu-system-riscv64 -machine virt -bios none -kernel kernel/kernel -m 128M -smp 3 -nographic -global virtio-mmio.force-legacy=false -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+
+xv6 kernel is booting
+
+hart 1 starting
+hart 2 starting
+init: starting sh
+$ proc_demo
+[pai 3] inicio: valor = 100 (endereco virtual 0x0000000000002000)
+[filho 4] fork() retornou 0 para mim
+[filho 4] valor herdado = 100 (endereco virtual 0x0000000000002000)
+[filho 4] alterei a minha copia: valor = 999
+[filho 4] chamando exit(42)
+[pai 3] fork() retornou 4 (PID do filho)
+[pai 3] o filho entrou em exit(), mas ainda nao foi coletado por wait()
+[pai 3] wait() retornou pid = 4, status = 42
+[pai 3] o meu valor continua = 100 (endereco virtual 0x0000000000002000)
+[pai 3] verificacoes:
+  [OK] fork() criou um filho com PID diferente do pai
+  [OK] wait() devolveu o PID do filho criado
+  [OK] wait() devolveu o status passado ao exit() do filho
+  [OK] a variavel do pai permaneceu com o valor inicial
+  [OK] um segundo wait() retorna -1 (filho ja coletado)
+[pai 3] resultado: TODAS AS VERIFICACOES OK
+$ proc_demo au  pausa
+[pai 5] inicio: valor = 100 (endereco virtual 0x0000000000002000)
+[filho 6] fork() retornou 0 para mim
+[filho 6] valor herdado = 100 (endereco virtual 0x0000000000002000)
+[filho 6] alterei a minha copia: valor = 999
+[filho 6] chamando exit(42)
+[pai 5] fork() retornou 6 (PID do filho)
+[pai 5] o filho entrou em exit(), mas ainda nao foi coletado por wait()
+[pai 5] pressione Ctrl-P agora: o filho 6 deve aparecer como zombie
+[pai 5] wait() retornou pid = 6, status = 42
+[pai 5] o meu valor continua = 100 (endereco virtual 0x0000000000002000)
+[pai 5] verificacoes:
+  [OK] fork() criou um filho com PID diferente do pai
+  [OK] wait() devolveu o PID do filho criado
+  [OK] wait() devolveu o status passado ao exit() do filho
+  [OK] a variavel do pai permaneceu com o valor inicial
+  [OK] um segundo wait() retorna -1 (filho ja coletado)
+[pai 5] 
+1 rsleep  init
+2 sleep  sh
+5 run    proc_demo
+
+1 sleep  init
+2 sleep  sh
+5 run    proc_demo
+esultado: TODAS AS VERIFICACOES OK
+$ clear     esit    exit
+exec exit failed
+$ x
+exec x failed
+$ QEMU: Terminated
+(xv6) /lab/xv6-labs-2024 $ 
+(xv6) /lab/xv6-labs-2024 $ clear
+(xv6) /lab/xv6-labs-2024 $ make qemu
+qemu-system-riscv64 -machine virt -bios none -kernel kernel/kernel -m 128M -smp 3 -nographic -global virtio-mmio.force-legacy=false -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+
+xv6 kernel is booting
+
+hart 1 starting
+hart 2 starting
+init: starting sh
+$ proc_demo pausa
+[pai 3] inicio: valor = 100 (endereco virtual 0x0000000000002000)
+[filho 4] fork() retornou 0 para mim
+[filho 4] valor herdado = 100 (endereco virtual 0x0000000000002000)
+[filho 4] alterei a minha copia: valor = 999
+[filho 4] chamando exit(42)
+[pai 3] fork() retornou 4 (PID do filho)
+[pai 3] o filho entrou em exit(), mas ainda nao foi coletado por wait()
+[pai 3] pressione Ctrl-P agora: o filho 4 deve aparecer como zombie
+
+1 sleep  init
+2 sleep  sh
+3 sleep  proc_demo
+4 zombie proc_demo
+
+1 sleep  init
+2 sleep  sh
+3 sleep  proc_demo
+4 zombie proc_demo
+[pai 3] wait() retornou pid = 4, status = 42
+[pai 3] o meu valor continua = 100 (endereco virtual 0x0000000000002000)
+[pai 3] verificacoes:
+  [OK] fork() criou um filho com PID diferente do pai
+  [OK] wait() devolveu o PID do filho criado
+  [OK] wait() devolveu o status passado ao exit() do filho
+  [OK] a variavel do pai permaneceu com o valor inicial
+  [OK] um segundo wait() retorna -1 (filho ja coletado)
+[pai 3] resultado: TODAS AS VERIFICACOES OK
+$ QEMU: Terminated
+(xv6) /lab/xv6-labs-2024 $ xit
+bash: xit: command not found
+(xv6) /lab/xv6-labs-2024 $ exit
+exit
+
+Script done on 2026-11-23 07:27:28-03:00 [COMMAND_EXIT_CODE="1"]
