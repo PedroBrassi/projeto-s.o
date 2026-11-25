@@ -17,6 +17,8 @@ projeto-s.o/
 ├── kernelPlay/                # site publicado: HTML, CSS, JS e imagens
 ├── docs/
 │   ├── planejamento.md        # entregas, responsáveis e situação
+│   ├── desenvolvimento/       # arquitetura, histórico e documentação em Markdown, Word e PDF
+│   ├── revisao-conteudo-2026-11-23.md # registro das correções didáticas
 │   ├── trilhas/               # material educativo em Markdown
 │   └── justificativa/         # justificativa revisada em Markdown, Word e PDF
 ├── xv6-demo/                  # demonstração real no xv6: README, código, patch e evidências
@@ -24,6 +26,7 @@ projeto-s.o/
 │   └── evidencias/            # ambiente, comandos e resultados, logs e capturas
 ├── apresentacao/              # fontes editáveis e PDF sobre SO atual
 ├── design/                    # proposta visual e imagens originais
+├── tests/                     # verificações automatizadas do minigame
 └── CONTRIBUTING.md            # como colaborar
 ```
 
@@ -35,21 +38,29 @@ projeto-s.o/
 | Justificativa técnica | Revisão documental de 25/11/2026 em Markdown, Word e PDF: prompts de IA, agente, heurísticas de Nielsen e carga fixa; revisão conjunta e publicação no Padlet pendentes | [Documentos](docs/justificativa/README.md) |
 | Demonstração no xv6 | Processos (`fork`/`wait`/`exit`) e threads de usuário (`uthread`, modelo N:1) implementados e executados no `xv6-labs-2024` (`util@79e8024`), com patch reproduzido em cópia limpa; reprodução pela equipe de testes e publicação no Padlet pendentes | [Roteiro, código e evidências](xv6-demo/README.md) |
 | SO atual | Primeira versão dos slides sobre Linux produzida no Canva (15 slides); correções, referências, comparação com KernelPlay e xv6 e envio da fonte editável + PDF pendentes | [Orientações](apresentacao/README.md) |
-| Padlet | Identificação, quatro colunas, link do simulador e modelo de avaliações preparados | Link acima |
+| Padlet | Preparação registrada: identificação, quatro colunas, link do simulador e modelo de avaliações; publicação e conferência dos materiais finais pendentes | [Padlet do grupo](https://padlet.com/pedroluccas2/grupo-3-processos-e-threads-s024zwdrjwwsaqd4z88l) |
 
 O conteúdo didático sobre xv6 dentro do jogo não comprova a execução da demonstração prática; as evidências reais estão em [`xv6-demo/evidencias/`](xv6-demo/evidencias/comandos-e-resultados.md).
 
-Responsáveis e situação detalhada: [planejamento](docs/planejamento.md).
+Situação documental conferida em 25/11/2026 com base nos arquivos do repositório; publicações externas e entregas dos integrantes precisam de confirmação. Responsáveis e situação detalhada: [planejamento](docs/planejamento.md).
 
 ## Documentação da plataforma
 
-- [Desenvolvimento completo em Markdown](docs/desenvolvimento/documentacao-desenvolvimento.md), [Word](docs/desenvolvimento/documentacao-desenvolvimento.docx) e [PDF](docs/desenvolvimento/documentacao-desenvolvimento.pdf): arquitetura, conteúdo, algoritmos, decisões, histórico, validação e manutenção.
+- [Índice da documentação de desenvolvimento](docs/desenvolvimento/README.md), [texto em Markdown](docs/desenvolvimento/documentacao-desenvolvimento.md), [Word](docs/desenvolvimento/documentacao-desenvolvimento.docx) e [PDF](docs/desenvolvimento/documentacao-desenvolvimento.pdf): arquitetura, conteúdo, algoritmos, decisões, histórico, validação e manutenção.
 - [Justificativa técnica](docs/justificativa/README.md): os quatro pontos da entrega, com enfoque em Processos e Threads, registro de IA, análise de usabilidade e limites da carga fixa; edição documental de 25/11/2026.
 - [Seja o Escalonador](docs/Minigame_Escalonador.md): minigame finalizado e integrado à versão `9989806`.
 
 ## Executar o site
 
 Abra `kernelPlay/index.html` no navegador. O jogo usa HTML, CSS e JavaScript puro e não exige instalação de dependências.
+
+Para uma prévia por HTTP, execute na raiz do repositório:
+
+```sh
+python -m http.server 8000
+```
+
+Acesse [a prévia local](http://localhost:8000/kernelPlay/). Python é opcional para servir os arquivos; o jogo continua sendo executado pelo navegador. Para os testes automatizados do minigame, com Node.js instalado, execute `node tests/escalonador.cjs` na raiz. Esses testes não executam a demonstração real do xv6.
 
 O arquivo `index.html` da raiz mantém a entrada do GitHub Pages. A pasta `kernelPlay/` foi preservada. Após a renomeação do repositório para `projeto-s.o`, o endereço público passou a ser `https://pedrobrassi.github.io/projeto-s.o/kernelPlay/`. Atualize os links compartilhados anteriormente com `/kernel-play/`. Alterações locais só aparecem online depois de enviadas ao GitHub e publicadas.
 

@@ -10,7 +10,7 @@ Abra o `index.html` no navegador. Não precisa instalar nada.
 ```
 kernelPlay/
 ├── index.html             ← só a casca; carrega os scripts
-├── manifest.webmanifest   ← permite "adicionar à tela inicial" no celular
+├── manifest.webmanifest   ← metadados para atalhos; suporte depende do navegador
 ├── css/estilo.css         ← visual; as cores ficam todas em :root
 ├── js/
 │   ├── trilhas.js         ← lista de trilhas, trilhas previstas e o formato do conteúdo
@@ -36,23 +36,23 @@ As imagens originais e a proposta visual ficam em `../design/`, fora do jogo.
 2. **Menu de trilhas** (estilo GRUB): escolha com as setas e `Enter` ou com um clique. Trilhas ainda sem conteúdo aparecem como `[em breve]`.
 3. **Trilha**: as etapas em sequência de boot, com status `[  OK  ]`, `[ .... ]` ou `[ LOCK ]`.
 4. **Lição**: desafios com o mascote reagindo a acerto, erro e dica.
-5. **Veja no xv6 / E no Linux?**: trecho real do xv6 e o mesmo conceito no terminal do Linux.
+5. **Veja no xv6 / E no Linux?**: trechos resumidos ou adaptados e saídas ilustrativas; o navegador não executa Linux ou xv6. As evidências reais do grupo estão em [xv6-demo](../xv6-demo/README.md).
 6. **Resultado**: ciclos ganhos, precisão e maior uptime.
 7. **Kernel panic**: quando a estabilidade chega a 0%.
 8. **man**: manual no estilo do Linux, aberto pelo botão `man` no topo. Reúne as páginas de todas as trilhas; cada etapa concluída libera as páginas dela (conceitos, comandos e chamadas de sistema), com busca por palavra-chave (`man -k`) e links "VEJA TAMBÉM" entre as páginas. A tecla `q` sai do manual.
 
 ## Conteúdo
-- **Trilha 1 · Introdução aos SOs** — `../docs/trilhas/Trilha_1_Introducao.md` (Aulas 1 a 3).
-- **Trilha 2 · Gerenciamento de Processos** — `../docs/trilhas/Trilha_2_Gerenciamento_de_Processos.md` (Aulas 4 a 11). A fase 2.1 foi dividida em três etapas (processo e PCB; estados; criação e término) para as lições não ficarem longas demais.
-- **Trilha 3 · Gerenciamento de Memória** — `../docs/trilhas/Trilha_3_Gerenciamento_de_Memoria.md` (Aulas 12 a 15): MMU, paginação, uso da memória, alocação, paginação em disco e substituição de páginas (FIFO, LRU e ótimo como simulação).
-- **Trilha 4 · Gerenciamento de Arquivos** — `../docs/trilhas/Trilha_4_Gerenciamento_de_Arquivos.md` (Aulas 16 a 18 e Diretórios): arquivos, descritores, sistemas de arquivos, alocação de arquivos (FAT, i-nodes, extensões) e diretórios e atalhos.
-- **Aulas de laboratório**: desafios marcados com 🧪 (LAB 01 a LAB 04 · xv6) usam os comandos, códigos e resultados das aulas práticas: `ps`, `pstree`, `fork`, threads, os programas de escalonamento e sincronização em C, os experimentos em Java do Lab 03 e os exercícios do xv6.
+- **Trilha 1 · Introdução aos SOs** — [material de apoio](../docs/trilhas/Trilha_1_Introducao.md) (Aulas 1 a 3).
+- **Trilha 2 · Gerenciamento de Processos** — [material de apoio](../docs/trilhas/Trilha_2_Gerenciamento_de_Processos.md) (Aulas 4 a 11). A fase 2.1 foi dividida em três etapas (processo e PCB; estados; criação e término) para as lições não ficarem longas demais.
+- **Trilha 3 · Gerenciamento de Memória** — [material de apoio](../docs/trilhas/Trilha_3_Gerenciamento_de_Memoria.md) (Aulas 12 a 15): MMU, paginação, uso da memória, alocação, paginação em disco e substituição de páginas (FIFO, LRU e ótimo como simulação).
+- **Trilha 4 · Gerenciamento de Arquivos** — [material de apoio](../docs/trilhas/Trilha_4_Gerenciamento_de_Arquivos.md) (Aulas 16 a 18 e Diretórios): arquivos, descritores, sistemas de arquivos, alocação de arquivos (FAT, i-nodes, extensões) e diretórios e atalhos.
+- **Aulas de laboratório**: desafios marcados com 🧪 (LAB 01 a LAB 04 · xv6) apresentam exemplos baseados nos comandos, códigos e resultados das aulas práticas: `ps`, `pstree`, `fork`, threads, os programas de escalonamento e sincronização em C, os experimentos em Java do Lab 03 e os exercícios do xv6.
 - **Estados de processo**: o jogo usa os nomes da aula (Novo, Pronto, Executando, Bloqueado, Zumbi, Finalizado) e mostra ao lado o nome do xv6 (RUNNABLE, RUNNING, SLEEPING, ZOMBIE, UNUSED).
-- **Trechos do xv6**: seguem o xv6-labs-2024, a versão usada no laboratório.
+- **Trechos do xv6**: usam como referência o xv6-labs-2024, com resumos ou adaptações identificados. A origem e a base dos experimentos reais, incluindo o Uthread de 2023 integrado à base 2024, estão no [README da demonstração](../xv6-demo/README.md).
 
 ## Trilha 5 — Dispositivos e Entrada/Saída
 
-Nove etapas e 72 desafios organizados a partir dos capítulos 19–21 do Maziero: hardware e interfaces, interrupções, drivers, classes de dispositivos, estratégias de E/S, DMA e armazenamento. Buffers, cache e coordenação compõem um aprofundamento técnico identificado. Inclui 27 páginas no manual, terminal simulado, simulação de estados de processos e cartões de conexão com xv6/Linux. Consulte [o conteúdo revisado e as referências](../docs/trilhas/Trilha_5_Dispositivos_e_Entrada_Saida.md). Os cartões usam esquemas didáticos e não substituem a demonstração prática do grupo. As etapas revisadas usam IDs es-v2-*, iniciando um novo progresso na trilha 5 sem alterar os IDs das trilhas 1–4.
+Nove etapas e 72 blocos de desafio, incluindo conceitos, organizados a partir dos capítulos 19–21 do Maziero: hardware e interfaces, interrupções, drivers, classes de dispositivos, estratégias de E/S, DMA e armazenamento. Buffers, cache e coordenação compõem um aprofundamento técnico identificado. Inclui 27 páginas no manual, terminal simulado, simulação de estados de processos e cartões de conexão com xv6/Linux. Consulte [o conteúdo revisado e as referências](../docs/trilhas/Trilha_5_Dispositivos_e_Entrada_Saida.md). Os cartões usam esquemas didáticos e não substituem a demonstração prática do grupo. As etapas revisadas usam IDs es-v2-*, iniciando um novo progresso na trilha 5 sem alterar os IDs das trilhas 1–4.
 
 ## Laboratório
 Entrada própria no menu de trilhas (**🧪 Laboratório**). Erros não custam estabilidade e não travam etapas; o progresso das trilhas não muda.
@@ -66,7 +66,7 @@ Entrada própria no menu de trilhas (**🧪 Laboratório**). Erros não custam e
 | Escalonamento | 4 processos com chegada e duração sorteadas: espera média no FCFS, SJF, SRTF ou Round-Robin | 2 |
 | Permissões | rwx ↔ octal e "o que o grupo/outros podem fazer" | 4 |
 | Blocos e i-nodes | fragmentação interna e quais ponteiros do i-node (Ext2/3) um arquivo usa | 4 |
-| Caminhos | relativo → absoluto e caminho canônico | 4 |
+| Caminhos | relativo → absoluto e normalização de caminhos em cenários sem links simbólicos | 4 |
 | Misturado | um de cada | — |
 
 As explicações mostram a conta completa (por exemplo, o diagrama de Gantt e a espera de cada processo).
@@ -92,6 +92,8 @@ Abra o jogo com `?apresentacao` no fim do endereço, por exemplo `kernelPlay/ind
 - A estabilidade nunca zera sozinha (para em 20%). Para mostrar o kernel panic, use o link **Mostrar a tela de kernel panic** na trilha.
 - O progresso fica separado do modo normal.
 
+O manifesto não garante instalação nem uso offline. Não há service worker registrado para disponibilizar o jogo sem rede. O progresso da sessão não é sincronizado entre dispositivos.
+
 ## Mecânicas
 | Mecânica | Como funciona |
 |---|---|
@@ -100,9 +102,9 @@ Abra o jogo com `?apresentacao` no fim do endereço, por exemplo `kernelPlay/ind
 | ⏱ Uptime | Acertos seguidos; zera ao errar. |
 | 🔒 Trilha | Dentro de cada trilha, cada etapa libera a próxima. As trilhas podem ser feitas em qualquer ordem. |
 | ✅ Feedback | Logo após cada resposta, com uma explicação curta e a reação do mascote. |
-| 🔁 Revisão | Questão errada volta no fim da mesma lição. |
+| 🔁 Revisão | Respostas erradas voltam ao fim da lição quando a atividade não foi concluída; atividades interativas podem encerrar com os erros registrados. |
 | 📈 Diagrama ao vivo | Na simulação, o estado do processo selecionado acende e a transição feita pisca. |
-| 💾 Sessão | Progresso salvo em `sessionStorage` (some ao fechar a aba). |
+| 💾 Sessão | Progresso temporário em `sessionStorage`, separado entre modo normal e apresentação; não é registro acadêmico permanente. |
 
 ## Tipos de desafio (em `js/trilhas/*.js`)
 - `conceito`: texto curto explicando o assunto.

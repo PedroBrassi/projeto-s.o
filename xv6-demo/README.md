@@ -40,7 +40,7 @@ xv6-demo/
 | Base do xv6 | `git://g.csail.mit.edu/xv6-labs-2024`, branch `util`, commit `79e8024d61c3dd92ccf064fc67bb99cb999f70ab` |
 | Esqueleto do Uthread | `git://g.csail.mit.edu/xv6-labs-2023`, branch `thread`, commit `0d65be5d1d880afafbf08c2adb605cf9f72216e2` |
 
-Detalhes completos em `evidencias/ambiente.txt`.
+Detalhes completos no [registro do ambiente](evidencias/ambiente.txt). Os resultados esperados, observados e a reprodução independente pendente estão em [comandos e resultados](evidencias/comandos-e-resultados.md).
 
 O branch `thread` não existe em `xv6-labs-2024`, nem na imagem do professor nem no servidor do MIT. Por isso, apenas o esqueleto de `uthread.c`, `uthread_switch.S` e a regra de compilação foram tomados do `xv6-labs-2023` e aplicados sobre a base 2024. A ligação do `uthread` usa o script `user/user.ld`, o mesmo dos demais programas da versão 2024.
 
@@ -168,7 +168,7 @@ O mesmo PID em todas as linhas; pilhas de A e B em faixas distintas, com a vari�
 
 ## Reprodução a partir de cópia limpa
 
-Dentro do contêiner, o branch `util` foi clonado da cópia embutida na imagem para `/tmp/xv6-limpo`. Em seguida, `git apply --check` confirmou o patch (`PATCH APLICAVEL`), o patch foi aplicado e o xv6 foi compilado do zero. `proc_demo` e `uthread` terminaram com todas as verificações `[OK]`. Veja `evidencias/passo4-uthread-e-copia-limpa.txt` e `evidencias/capturas/passo7-copia-limpa.png`.
+Dentro do contêiner, o branch `util` foi clonado da cópia embutida na imagem para `/tmp/xv6-limpo`. Em seguida, `git apply --check` confirmou o patch (`PATCH APLICAVEL`), o patch foi aplicado e o xv6 foi compilado do zero. `proc_demo` e `uthread` terminaram com todas as verificações `[OK]`. Veja o [log da reprodução limpa](evidencias/passo4-uthread-e-copia-limpa.txt) e a [captura correspondente](evidencias/capturas/passo7-copia-limpa.png).
 
 ## Limitações
 
