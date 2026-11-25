@@ -134,4 +134,4 @@ Todas as cores estão nas variáveis do topo do `css/estilo.css` (`--marca`, `--
 ## Teclado
 `1`–`4` escolhem a opção; `Enter` verifica ou continua.
 
-Revisão de conceitos e gabaritos de 23/11/2026: [alterações, fontes e escopo](../docs/revisao-conteudo-2026-11-23.md). Os documentos de 19/11 preservam a versão original identificada.
+Revisão de conceitos e gabaritos de 23/11/2026: [alterações, fontes e escopo](../docs/revisao-conteudo-2026-11-23.md). A descrição arquitetural identifica sua versão de referência; os documentos receberam revisão documental em 25/11/2026. A [justificativa revisada](../docs/justificativa/README.md) inclui registro de IA, análise de usabilidade e esclarecimento da carga fixa.

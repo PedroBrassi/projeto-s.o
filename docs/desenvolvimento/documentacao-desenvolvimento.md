@@ -2,13 +2,13 @@
 
 Projeto Integrador de Sistemas Operacionais
 
-Grupo 3 | Processos e Threads | 19 de novembro de 2026
+Grupo 3 | Processos e Threads | Revisão documental de 25 de novembro de 2026
 
 ## Apresentação
 
 O KernelPlay é uma plataforma educativa que combina trilhas de estudo, desafios, simulações, terminal e exercícios de laboratório para ensinar Sistemas Operacionais. O foco do Projeto Integrador é Processos e Threads; memória, arquivos e entrada e saída ampliam o contexto necessário para entender como as tarefas utilizam os recursos do sistema.
 
-Este documento descreve o produto, sua organização pedagógica, arquitetura, algoritmos, decisões de implementação, evolução registrada, validação e manutenção. A versão de referência é o commit 998980660419f90c246a42e0e7219967799ba175, que inclui o minigame Seja o Escalonador. A plataforma é executada no navegador e mantém modelos didáticos em JavaScript; ela não inicializa um kernel nem executa comandos no computador do aluno.
+Este documento descreve o produto, sua organização pedagógica, arquitetura, algoritmos, decisões de implementação, evolução registrada, validação e manutenção. A versão de referência é o commit 998980660419f90c246a42e0e7219967799ba175, que inclui o minigame Seja o Escalonador. A plataforma é executada no navegador e mantém modelos didáticos em JavaScript; ela não inicializa um kernel nem executa comandos no computador do aluno. A revisão documental de 25/11/2026 atualiza a situação das entregas e os vínculos com a justificativa. A descrição arquitetural conserva a versão de referência; as correções didáticas posteriores estão registradas em docs/revisao-conteudo-2026-11-23.md.
 
 ### Identificação e acesso
 
@@ -317,7 +317,7 @@ O jogo não usa compilação, instalação de pacotes ou pipeline de build no se
 
 O minigame Seja o Escalonador está finalizado no escopo implementado e integra a versão 9989806. A plataforma possui os recursos documentados, com limitações explícitas e possibilidade de revisão pelo grupo. Esta entrega acrescenta a documentação de desenvolvimento e a justificativa técnica em fonte editável e PDF.
 
-Na estrutura inspecionada, xv6-demo/codigo/ e xv6-demo/evidencias/ não possuem implementação ou evidências da demonstração, e apresentacao/ contém orientações, sem os slides finais. Essas entregas permanecem independentes. A justificativa deve ser revisada pelos sete integrantes antes da entrega acadêmica e anexada ao post apropriado no Padlet; gerar o arquivo local não o publica automaticamente.
+Na conferência documental de 25/11/2026, xv6-demo/ contém os experimentos proc_demo e uthread, código, patch, ambiente, logs e capturas reais. O registro de testes ainda identifica como pendente a reprodução por outro integrante; esta revisão não representa nova execução. O planejamento registra uma primeira versão dos slides no Canva, mas apresentacao/ ainda não contém a fonte editável nem o PDF final. A justificativa foi revisada com prompts de IA, identificação do agente, análise das heurísticas de Nielsen e esclarecimento sobre a carga fixa; a versão exata do modelo de IA não foi registrada. A revisão conjunta e a publicação dos materiais no Padlet continuam pendentes conforme os registros; gerar arquivos locais não os publica automaticamente.
 
 Extensões possíveis incluem ampliar testes do simulador de estados e do shell, criar políticas automáticas selecionáveis no minigame, salvar comparações entre sessões e realizar avaliação com alunos. Essas possibilidades não são funcionalidades concluídas. Qualquer política nova deverá explicitar desempate, instante de preempção, custo de troca e população usada nas métricas para manter a comparação interpretável.
 
@@ -329,7 +329,7 @@ Extensões possíveis incluem ampliar testes do simulador de estados e do shell,
 
 [R3] MAZIERO, Carlos A. Escalonamento de tarefas. Capítulo 6. https://wiki.inf.ufpr.br/maziero/lib/exe/fetch.php?media=socm:socm-texto-06.pdf. Consulta em 19/11/2026.
 
-[R4] MIT PDOS. xv6 RISC V. Código-fonte do sistema didático, especialmente kernel/proc.c e kernel/proc.h. https://github.com/mit-pdos/xv6-riscv. Os cartões do jogo também fazem referência ao xv6-labs-2024; a demonstração prática deverá registrar exatamente a revisão utilizada.
+[R4] MIT PDOS. xv6 RISC V. Código-fonte do sistema didático, especialmente kernel/proc.c e kernel/proc.h. https://github.com/mit-pdos/xv6-riscv. Os cartões do jogo também fazem referência ao xv6-labs-2024; a base utilizada e a origem do Uthread estão registradas em xv6-demo/README.md e xv6-demo/evidencias/ambiente.txt.
 
 [R5] MDN Web Docs. Window sessionStorage property. https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage. Consulta em 19/11/2026.
 
