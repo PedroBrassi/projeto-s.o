@@ -2,13 +2,13 @@
 
 Projeto Integrador de Sistemas Operacionais
 
-Grupo 3 | Processos e Threads | 19 de novembro de 2026
+Grupo 3 | Processos e Threads | Revisão documental de 25 de novembro de 2026
 
 ## Identificação e objetivo
 
 Desenvolvemos o KernelPlay como uma plataforma educativa para relacionar conceitos de Sistemas Operacionais com ações que o aluno pode observar e experimentar. Nosso recorte principal é Processos e Threads: criação e término de processos, estados de execução, bloqueio por entrada e saída, escalonamento e modelos de implementação de threads. As demais trilhas oferecem o contexto de memória, arquivos e dispositivos usado por essas tarefas.
 
-O simulador pode ser acessado em https://pedrobrassi.github.io/projeto-s.o/kernelPlay/ e seu código está em https://github.com/PedroBrassi/projeto-s.o. Esta justificativa corresponde à versão 998980660419f90c246a42e0e7219967799ba175, com o minigame Seja o Escalonador integrado. As explicações abaixo descrevem as regras implementadas e distinguem as representações didáticas do funcionamento de um kernel real.
+O simulador pode ser acessado em https://pedrobrassi.github.io/projeto-s.o/kernelPlay/ e seu código está em https://github.com/PedroBrassi/projeto-s.o. A descrição das regras do simulador tem como base a versão 998980660419f90c246a42e0e7219967799ba175, com o minigame Seja o Escalonador integrado. Esta revisão documental, de 25/11/2026, acrescenta a análise de usabilidade, o registro de IA e esclarecimentos sobre a carga fixa; também atualiza a situação da demonstração xv6 conforme os arquivos do repositório. As correções de conteúdo de 23/11/2026 são registradas separadamente em docs/revisao-conteudo-2026-11-23.md. As explicações abaixo descrevem as regras implementadas e distinguem as representações didáticas do funcionamento de um kernel real.
 
 Integram o grupo: Ana Flávia dos Santos Peixoto; Aurélio Junior; Gabriel Alves Domingos; Guilherme Gouvêa da Silva; Pedro Brassi Luccas; Pedro Lima; Victor Orlando Avelar. O Padlet reúne as entregas em https://padlet.com/pedroluccas2/grupo-3-processos-e-threads-s024zwdrjwwsaqd4z88l.
 
@@ -133,6 +133,8 @@ Mantivemos pausa manual e pausa automática quando a aba fica oculta para permit
 
 Adotamos uma carga fixa para que repetir em 1:1 e N:1 preserve chegadas, trabalho de CPU e pontos de E/S por tarefa. Isso torna a comparação mais interpretável do que trocar o cenário junto com o modelo. Durante uma rodada, inclusive em pausa, a troca de modelo fica bloqueada. O laboratório mantém exercícios sorteados porque seu objetivo é praticar contas com dados novos.
 
+A interação do aluno ocorre na escolha do modelo, no despacho, na preempção e na pausa. A versão entregue não oferece entrada personalizada para chegadas, durações de CPU ou eventos de E/S. A carga fixa é uma decisão de escopo para favorecer repetição e comparação; ela limita a investigação de cenários próprios e difere de uma proposta com carga informada pelo usuário. Mesmo com a mesma carga, as decisões do jogador podem alterar as métricas. A configuração de cargas é uma possibilidade de evolução, não uma funcionalidade implementada. Essa justificativa não substitui a conferência de eventual exigência de entrada personalizada no enunciado da disciplina.
+
 ### Despacho manual e métricas visíveis
 
 Colocamos o jogador no papel de escalonador para que a escolha tenha consequência observável. Uma tarefa pode esperar enquanto existe uma decisão pendente do jogador; portanto, as métricas refletem tanto as regras do modelo quanto sua interação. Não há prioridade automática, aging ou quantum no minigame. Ações de yield da máquina de estados representam devolução voluntária; a retirada por clique no núcleo do minigame é identificada como preempção manual.
@@ -179,13 +181,76 @@ Na memória, OPT usa conhecimento da cadeia futura e funciona como referência t
 
 ### Limite da entrega prática
 
-A demonstração em xv6 é uma entrega separada. Para concluí-la, o grupo precisa registrar a versão utilizada, o código integrado, os comandos realmente executados e os resultados observados. Da mesma forma, a comparação com um SO atual precisa dos slides e de suas referências. Esta justificativa explica o simulador e não substitui essas evidências.
+A demonstração em xv6 é uma entrega separada e já possui código e evidências de execução no repositório: proc_demo para processos e uthread para threads cooperativas de usuário. O README de xv6-demo registra a base xv6-labs-2024, branch util, commit 79e8024d61c3dd92ccf064fc67bb99cb999f70ab, e a origem do esqueleto Uthread em xv6-labs-2023. O planejamento de 23/11 registra a reprodução independente como pendente. Esta revisão documental não representa uma nova execução dos experimentos. A comparação com um SO atual continua vinculada aos slides e às referências da entrega correspondente; esta justificativa não substitui esses materiais.
 
 ## Validação da implementação
 
 Em 19/11/2026, executamos node tests/escalonador.cjs e as nove verificações passaram. Elas cobrem restrição de paralelismo N:1, paralelismo 1:1 e bloqueio individual, bloqueio de grupo, duração de 60 passos, espera longa, carga equivalente, conclusão de processos e threads, métricas e cancelamento do temporizador. Os testes verificam as regras da simulação, inclusive o controle de callbacks em ambiente simulado.
 
 Na integração foram conferidos o carregamento dos scripts, acesso pelo menu, despacho, pausa, navegação, comportamento N:1 e layout em largura reduzida. Essa verificação não equivale a um estudo de eficácia pedagógica, a uma auditoria completa de acessibilidade ou a testes de todas as etapas da plataforma. O código e os testes ficam disponíveis para o professor reproduzir a avaliação.
+
+## Análise de usabilidade pelas heurísticas de Nielsen
+
+Relacionamos as dez heurísticas de Nielsen [R7] com funcionalidades identificadas no KernelPlay. A tabela apresenta uma análise do grupo sobre a interface e seus limites. Ela não constitui certificação de atendimento integral nem estudo de usabilidade com participantes.
+
+| Heurística | Evidência no KernelPlay | Limite da análise |
+|---|---|---|
+| 1. Visibilidade do estado | Tempo, estados das tarefas, ocupação dos núcleos e métricas. | Compreensão pelos alunos ainda precisa ser avaliada. |
+| 2. Correspondência com o mundo real | CPU, filas e E/S acompanhadas de explicações. | Terminologia técnica exige contextualização. |
+| 3. Controle e liberdade | Pausa, saída e repetição do minigame. | Não há desfazer geral das decisões da rodada. |
+| 4. Consistência e padrões | Botões e estados seguem padrões visuais recorrentes. | Consistência não foi medida com participantes. |
+| 5. Prevenção de erros | Ações inválidas bloqueadas e confirmação para apagar progresso. | Restrições não evitam todos os enganos. |
+| 6. Reconhecimento em vez de memorização | Opções, estados e dicas ficam disponíveis na interface. | Atividades de terminal ainda exigem lembrar comandos. |
+| 7. Flexibilidade e eficiência | Menu por teclado e modo apresentação. | Cargas do minigame não são personalizáveis. |
+| 8. Estética e minimalismo | Trilhas divididas em etapas e manual acessado sob demanda. | Densidade visual merece avaliação em telas pequenas. |
+| 9. Reconhecer e recuperar erros | Feedback explica respostas e restrições de ações. | Recuperação depende do tipo de atividade. |
+| 10. Ajuda e documentação | Manual com busca, dicas e instruções contextuais. | Cobertura da ajuda deve acompanhar revisões do conteúdo. |
+
+Os exemplos podem ser localizados em kernelPlay/js/jogo.js, que organiza navegação, manual e feedback; em kernelPlay/js/escalonador.js, que apresenta o minigame, seus estados e controles; e em kernelPlay/css/estilo.css, que define os padrões visuais. O terminal e os trechos ilustrativos devem ser interpretados dentro das simplificações descritas neste documento.
+
+## Uso de inteligência artificial e principais prompts
+
+Durante o desenvolvimento do KernelPlay, utilizamos o ChatGPT/Codex como apoio à avaliação de propostas, à elaboração da documentação e à revisão técnica. As respostas foram utilizadas como material de trabalho sujeito a conferência. O grupo permanece responsável pelo conteúdo entregue, pelas decisões de implementação e pela explicação do funcionamento da plataforma.
+
+### Agente e versão utilizados
+
+Foi utilizado o Codex, agente de programação da OpenAI, para apoiar a análise do código, a implementação autorizada, as verificações e a elaboração da documentação. O histórico também contém interações referenciadas do ChatGPT. A versão específica do modelo utilizado em cada etapa não foi registrada no histórico consultado; por isso, não atribuímos uma versão não comprovada a todo o trabalho.
+
+### Principais prompts utilizados
+
+Os pedidos abaixo foram extraídos do histórico de trabalho, preservando sua grafia original.
+
+**1. Avaliação do minigame antes da implementação**
+
+“Queria adicionar um jogo, vou te mandar os codigos e voce faz uma avaliação e antes de implementar me avise.”
+
+O pedido foi acompanhado do código proposto. A ferramenta auxiliou na avaliação do minigame, cuja integração ocorreu posteriormente, mediante autorização.
+
+**2. Elaboração da documentação e da justificativa técnica**
+
+“Pode dar ele como finalizado. Quero agora, que voce faça uma documentação completa de todo desenvolvimento dessa plataforma. Além disso, faça um documento contendo: Justificativa técnica 1. O que o simulador mostra: qual conceito de SO e qual algoritmo. 2. Como funciona: a lógica do algoritmo e as estruturas de dados usadas, explicadas pelo grupo. 3. Decisões tomadas e por quê (ex.: passo a passo em vez de tempo real). 4. Simplificações: o que é diferente ou igual a de um SO real.”
+
+Esse pedido orientou a organização inicial da justificativa nos quatro itens solicitados. A documentação descreve as funcionalidades implementadas, as estruturas utilizadas e os limites do modelo didático. As quebras de linha do pedido foram reunidas neste registro para facilitar a leitura.
+
+**3. Revisão das informações da plataforma**
+
+“Quero que voce verifique se todas as informações presente no KernelPlay estão atualizadas.”
+
+A revisão envolveu consulta ao código e a fontes técnicas. Foram identificadas e corrigidas imprecisões em conceitos, exemplos, gabaritos e textos de apoio, com registro das alterações no repositório.
+
+**4. Avaliação de melhorias na justificativa**
+
+“Me fale quais melhorias a gente pode colocar. Antes de implementar, voce me fala o que acha?”
+
+A ferramenta auxiliou na análise de possíveis complementos à justificativa, incluindo o registro dos prompts, a relação entre funcionalidades e heurísticas de usabilidade e a explicação da escolha de carga fixa no minigame.
+
+### Conferência e responsabilidade pelo conteúdo
+
+As contribuições da IA foram acompanhadas de verificações registradas no histórico, incluindo consulta a referências técnicas, conferência do código, validação de sintaxe e comparação de resultados calculados. A atividade de Round-Robin, por exemplo, foi comparada com o algoritmo do laboratório. Também foram executadas as nove verificações da suíte existente do minigame, conforme o registro de validação deste documento.
+
+Essas verificações possuem escopo limitado e não comprovam a ausência de erros. Elas também não equivalem à execução de todos os programas citados nas trilhas ou à realização de testes de usabilidade com participantes.
+
+Os prompts apresentados registram interações relevantes do desenvolvimento, sem constituir um inventário completo de todas as consultas. A utilização da IA como apoio não transfere a responsabilidade acadêmica: cabe ao grupo compreender, revisar e explicar o material apresentado.
 
 ## Referências
 
@@ -195,8 +260,10 @@ Na integração foram conferidos o carregamento dos scripts, acesso pelo menu, d
 
 [R3] MAZIERO, Carlos A. Escalonamento de tarefas. Capítulo 6. https://wiki.inf.ufpr.br/maziero/lib/exe/fetch.php?media=socm:socm-texto-06.pdf. Consulta em 19/11/2026.
 
-[R4] MIT PDOS. xv6 RISC V. Código do kernel, especialmente kernel/proc.c e kernel/proc.h. https://github.com/mit-pdos/xv6-riscv. Os cartões do jogo também citam xv6-labs-2024; a demonstração deverá identificar sua revisão exata.
+[R4] MIT PDOS. xv6 RISC V. Código do kernel, especialmente kernel/proc.c e kernel/proc.h. https://github.com/mit-pdos/xv6-riscv. Os cartões do jogo também citam xv6-labs-2024. A revisão exata da demonstração e a origem do Uthread estão registradas em xv6-demo/README.md e xv6-demo/evidencias/ambiente.txt.
 
 [R5] MDN Web Docs. Window sessionStorage property e Window setInterval method. https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage e https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval. Consulta em 19/11/2026.
 
 [R6] Grupo 3. KernelPlay, código da versão 998980660419f90c246a42e0e7219967799ba175. https://github.com/PedroBrassi/projeto-s.o/tree/998980660419f90c246a42e0e7219967799ba175. Arquivos centrais: kernelPlay/js/simulador.js, laboratorio.js, escalonador.js, shell.js, jogo.js e tests/escalonador.cjs.
+
+[R7] NIELSEN, Jakob. 10 Usability Heuristics for User Interface Design. Nielsen Norman Group. Publicado em 24/04/1994; última revisão em 30/01/2024. https://www.nngroup.com/articles/ten-usability-heuristics/. Consulta em 25/11/2026.

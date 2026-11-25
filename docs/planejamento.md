@@ -4,13 +4,13 @@ Tema: **Processos e Threads**.
 
 Avise no grupo ao entregar cada etapa e, se houver dificuldade, avise antes para redistribuirmos as tarefas.
 
-Situação atualizada em 23/11/2026, com base no conteúdo do repositório.
+Conferência documental em 25/11/2026, com base nos arquivos disponíveis no repositório. A revisão da justificativa foi atualizada; os demais itens mantêm o status registrado, sem nova confirmação de conclusão.
 
 ## Entregas
 
 | # | Entrega | Responsável | Pasta | Situação |
 |---|---|---|---|---|
-| 1 | Justificativa técnica do simulador KernelPlay (PDF) | Pedro Brassi Luccas | `docs/justificativa/` | Entregue: Markdown, Word e PDF gerados; revisão (parte 5) e publicação no Padlet pendentes |
+| 1 | Justificativa técnica do simulador KernelPlay (PDF) | Pedro Brassi Luccas | `docs/justificativa/` | Entregue: Markdown, Word e PDF revisados em 25/11/2026, com prompts de IA, agente, heurísticas de Nielsen e justificativa da carga fixa; revisão conjunta (parte 5) e publicação no Padlet pendentes |
 | 2 | Implementação da demonstração no xv6 | Aurélio Junior e Pedro Brassi Luccas | `xv6-demo/codigo/` e `xv6-demo/README.md` | Entregue: processos (`proc_demo`) e threads de usuário (`uthread`), patch de integração, README e reprodução em cópia limpa; corrige apenas o que os testes apontarem |
 | 3 | Execução dos testes e registro dos comandos e resultados | Gabriel Alves Domingos | `xv6-demo/evidencias/` | Há o registro da execução feita na implementação; reprodução independente pendente (ver abaixo) |
 | 4 | Slides sobre processos e threads em um SO atual (Linux) | Pedro Lima | `apresentacao/` | Primeira versão no Canva (15 slides); correções e envio ao repositório pendentes (ver abaixo) |
@@ -60,6 +60,8 @@ Correções na primeira versão:
 
 - [ ] Revisar a justificativa ([`docs/justificativa/justificativa-tecnica.pdf`](justificativa/justificativa-tecnica.pdf)) e os slides corrigidos, e devolver sugestões no grupo.
 - [ ] Conferir as entregas: nomes de arquivos, PDFs que abrem, links, referências e o código em `xv6-demo/`.
+- [ ] Conferir no enunciado original se a entrada de carga pelo usuário é obrigatória ou apenas parte do prompt sugerido. A versão atual do minigame usa carga fixa; a justificativa explica a escolha e seu limite.
+- [ ] Usar a justificativa revisada em 25/11/2026 na publicação; os documentos registram o agente Codex e informam que a versão exata do modelo não foi registrada.
 - [ ] Atualizar os posts existentes do Padlet, sem duplicar:
   - **Simulador:** link do KernelPlay e PDF da justificativa;
   - **Demonstração no xv6:** link para `xv6-demo/` (README, código e evidências);

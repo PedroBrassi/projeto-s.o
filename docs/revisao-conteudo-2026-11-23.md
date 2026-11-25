@@ -38,7 +38,7 @@ Revisão de 23/11/2026. Esta edição corrige conceitos, gabaritos e limites de 
 | F27 | Rechecagem confirmou que README e planejamento atuais já registram o xv6 e os responsáveis; essas informações recentes foram preservadas |
 | F28 | Cartões Linux e terminais identificam saídas como exemplos; cartões xv6 distinguem trechos adaptados de evidências reais |
 
-Os seis itens iniciais correspondem a F01–F06. Os quatro textos de apoio em docs/trilhas foram alinhados aos arquivos JavaScript. PDFs e fontes de desenvolvimento/justificativa de 19/11 continuam sendo registros da versão explicitamente citada, não uma certificação desta edição.
+Os seis itens iniciais correspondem a F01–F06. Os quatro textos de apoio em docs/trilhas foram alinhados aos arquivos JavaScript. A descrição arquitetural dos documentos de desenvolvimento e justificativa identifica a versão de referência de 19/11. A revisão documental de 25/11 acrescenta registro de IA e análise de usabilidade à justificativa e atualiza o status das entregas; não certifica a execução de todos os exemplos das trilhas.
 
 ## Fontes técnicas
 
