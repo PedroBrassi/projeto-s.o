@@ -24,7 +24,7 @@ projeto-s.o/
 ├── xv6-demo/                  # demonstração real no xv6: README, código, patch e evidências
 │   ├── codigo/                # proc_demo.c, uthread.c, uthread_switch.S, integracao.patch
 │   └── evidencias/            # ambiente, comandos e resultados, logs e capturas
-├── apresentacao/              # fontes editáveis e PDF sobre SO atual
+├── apresentacao/              # PDF revisado e original dos slides sobre Linux
 ├── design/                    # proposta visual e imagens originais
 ├── tests/                     # verificações automatizadas do minigame
 └── CONTRIBUTING.md            # como colaborar
@@ -35,19 +35,19 @@ projeto-s.o/
 | Entrega | Situação | Local |
 |---|---|---|
 | KernelPlay | Implementado; conteúdo revisado em 23/11/2026; revisão funcional conjunta pendente | [Site e documentação](kernelPlay/README.md) |
-| Justificativa técnica | Revisão documental de 25/11/2026 em Markdown, Word e PDF: prompts de IA, agente, heurísticas de Nielsen e carga fixa; revisão conjunta e publicação no Padlet pendentes | [Documentos](docs/justificativa/README.md) |
-| Demonstração no xv6 | Processos (`fork`/`wait`/`exit`) e threads de usuário (`uthread`, modelo N:1) implementados e executados no `xv6-labs-2024` (`util@79e8024`), com patch reproduzido em cópia limpa; reprodução pela equipe de testes e publicação no Padlet pendentes | [Roteiro, código e evidências](xv6-demo/README.md) |
-| SO atual | Primeira versão dos slides sobre Linux produzida no Canva (15 slides); correções, referências, comparação com KernelPlay e xv6 e envio da fonte editável + PDF pendentes | [Orientações](apresentacao/README.md) |
-| Padlet | Preparação registrada: identificação, quatro colunas, link do simulador e modelo de avaliações; publicação e conferência dos materiais finais pendentes | [Padlet do grupo](https://padlet.com/pedroluccas2/grupo-3-processos-e-threads-s024zwdrjwwsaqd4z88l) |
+| Justificativa técnica | Revisão documental de 26/11/2026 em Markdown, Word e PDF: prompts de IA, agente, heurísticas de Nielsen e carga fixa; reprodução independente do xv6 incluída; revisão conjunta do grupo a confirmar | [Documentos](docs/justificativa/README.md) |
+| Demonstração no xv6 | Processos (`fork`/`wait`/`exit`) e threads de usuário (`uthread`, modelo N:1) implementados e executados no `xv6-labs-2024` (`util@79e8024`), com patch reproduzido em cópia limpa; reprodução independente por Gabriel confirmada com capturas e cópia limpa informada pelo grupo; código e evidências disponíveis para consulta | [Roteiro, código e evidências](xv6-demo/README.md) |
+| SO atual | PDF recebido com 14 slides e revisão técnica de 26/11/2026; original preservado; fonte editável ou link de edição do Canva pendente | [Orientações](apresentacao/README.md) |
+| Padlet | Identificação, quatro colunas, link do simulador e modelo de avaliações configurados; atualização dos anexos finais em andamento | [Padlet do grupo](https://padlet.com/pedroluccas2/grupo-3-processos-e-threads-s024zwdrjwwsaqd4z88l) |
 
 O conteúdo didático sobre xv6 dentro do jogo não comprova a execução da demonstração prática; as evidências reais estão em [`xv6-demo/evidencias/`](xv6-demo/evidencias/comandos-e-resultados.md).
 
-Situação documental conferida em 25/11/2026 com base nos arquivos do repositório; publicações externas e entregas dos integrantes precisam de confirmação. Responsáveis e situação detalhada: [planejamento](docs/planejamento.md).
+Situação documental conferida em 26/11/2026 com base nos arquivos do repositório; a publicação dos anexos é acompanhada no planejamento, e a revisão conjunta depende da confirmação do grupo. Responsáveis e situação detalhada: [planejamento](docs/planejamento.md).
 
 ## Documentação da plataforma
 
 - [Índice da documentação de desenvolvimento](docs/desenvolvimento/README.md), [texto em Markdown](docs/desenvolvimento/documentacao-desenvolvimento.md), [Word](docs/desenvolvimento/documentacao-desenvolvimento.docx) e [PDF](docs/desenvolvimento/documentacao-desenvolvimento.pdf): arquitetura, conteúdo, algoritmos, decisões, histórico, validação e manutenção.
-- [Justificativa técnica](docs/justificativa/README.md): os quatro pontos da entrega, com enfoque em Processos e Threads, registro de IA, análise de usabilidade e limites da carga fixa; edição documental de 25/11/2026.
+- [Justificativa técnica](docs/justificativa/README.md): os quatro pontos da entrega, com enfoque em Processos e Threads, registro de IA, análise de usabilidade e limites da carga fixa; edição documental de 26/11/2026.
 - [Seja o Escalonador](docs/Minigame_Escalonador.md): minigame finalizado e integrado à versão `9989806`.
 
 ## Executar o site
@@ -85,4 +85,4 @@ Leia [como contribuir](CONTRIBUTING.md) e registre a divisão em [planejamento](
 
 ## Revisão de conteúdo em 23/11/2026
 
-As correções conceituais e os exemplos revisados estão descritos em [revisão do conteúdo](docs/revisao-conteudo-2026-11-23.md). A descrição arquitetural mantém a versão de referência de 19/11; os documentos foram revisados em 25/11/2026 para atualizar o status e a justificativa. O estado da demonstração está em [xv6-demo](xv6-demo/README.md).
+As correções conceituais e os exemplos revisados estão descritos em [revisão do conteúdo](docs/revisao-conteudo-2026-11-23.md). A descrição arquitetural mantém a versão de referência de 19/11; os documentos foram revisados em 26/11/2026 para atualizar o status e a justificativa. O estado da demonstração está em [xv6-demo](xv6-demo/README.md).

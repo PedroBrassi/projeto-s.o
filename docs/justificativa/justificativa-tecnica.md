@@ -2,13 +2,13 @@
 
 Projeto Integrador de Sistemas Operacionais
 
-Grupo 3 | Processos e Threads | Revisão documental de 25 de novembro de 2026
+Grupo 3 | Processos e Threads | Revisão documental de 26 de novembro de 2026
 
 ## Identificação e objetivo
 
 Desenvolvemos o KernelPlay como uma plataforma educativa para relacionar conceitos de Sistemas Operacionais com ações que o aluno pode observar e experimentar. Nosso recorte principal é Processos e Threads: criação e término de processos, estados de execução, bloqueio por entrada e saída, escalonamento e modelos de implementação de threads. As demais trilhas oferecem o contexto de memória, arquivos e dispositivos usado por essas tarefas.
 
-O simulador pode ser acessado em https://pedrobrassi.github.io/projeto-s.o/kernelPlay/ e seu código está em https://github.com/PedroBrassi/projeto-s.o. A descrição das regras do simulador tem como base a versão 998980660419f90c246a42e0e7219967799ba175, com o minigame Seja o Escalonador integrado. Esta revisão documental, de 25/11/2026, acrescenta a análise de usabilidade, o registro de IA e esclarecimentos sobre a carga fixa; também atualiza a situação da demonstração xv6 conforme os arquivos do repositório. As correções de conteúdo de 23/11/2026 são registradas separadamente em docs/revisao-conteudo-2026-11-23.md. As explicações abaixo descrevem as regras implementadas e distinguem as representações didáticas do funcionamento de um kernel real.
+O simulador pode ser acessado em https://pedrobrassi.github.io/projeto-s.o/kernelPlay/ e seu código está em https://github.com/PedroBrassi/projeto-s.o. A descrição das regras do simulador tem como base a versão 998980660419f90c246a42e0e7219967799ba175, com o minigame Seja o Escalonador integrado. Esta revisão documental, de 26/11/2026, acrescenta a análise de usabilidade, o registro de IA e esclarecimentos sobre a carga fixa; também atualiza a situação da demonstração xv6 conforme os arquivos do repositório. As correções de conteúdo de 23/11/2026 são registradas separadamente em docs/revisao-conteudo-2026-11-23.md. As explicações abaixo descrevem as regras implementadas e distinguem as representações didáticas do funcionamento de um kernel real.
 
 Integram o grupo: Ana Flávia dos Santos Peixoto; Aurélio Junior; Gabriel Alves Domingos; Guilherme Gouvêa da Silva; Pedro Brassi Luccas; Pedro Lima; Victor Orlando Avelar. O Padlet reúne as entregas em https://padlet.com/pedroluccas2/grupo-3-processos-e-threads-s024zwdrjwwsaqd4z88l.
 
@@ -181,7 +181,7 @@ Na memória, OPT usa conhecimento da cadeia futura e funciona como referência t
 
 ### Limite da entrega prática
 
-A demonstração em xv6 é uma entrega separada e já possui código e evidências de execução no repositório: proc_demo para processos e uthread para threads cooperativas de usuário. O README de xv6-demo registra a base xv6-labs-2024, branch util, commit 79e8024d61c3dd92ccf064fc67bb99cb999f70ab, e a origem do esqueleto Uthread em xv6-labs-2023. O planejamento de 23/11 registra a reprodução independente como pendente. Esta revisão documental não representa uma nova execução dos experimentos. A comparação com um SO atual continua vinculada aos slides e às referências da entrega correspondente; esta justificativa não substitui esses materiais.
+A demonstração em xv6 é uma entrega separada e já possui código e evidências de execução no repositório: proc_demo para processos e uthread para threads cooperativas de usuário. O README de xv6-demo registra a base xv6-labs-2024, branch util, commit 79e8024d61c3dd92ccf064fc67bb99cb999f70ab, e a origem do esqueleto Uthread em xv6-labs-2023. A reprodução independente por Gabriel Alves Domingos foi confirmada: as capturas de proc_demo, proc_demo pausa com Ctrl-P e uthread mostram as verificações aprovadas. O grupo confirmou que a execução ocorreu em cópia limpa. O registro e as imagens estão em xv6-demo/evidencias/reproducao-gabriel.md, incorporado em 26/11/2026; a data exata da execução e o log completo dessa sessão não foram informados. Esta revisão documental não representa uma nova execução dos experimentos. A comparação com um SO atual está no PDF de 14 slides apresentacao/processos-threads-linux.pdf, revisado em 26/11/2026, com referências e comparação entre Linux, KernelPlay e xv6. O original foi preservado; a fonte editável ou o link de edição do Canva ainda não foi fornecido. Esta justificativa não substitui esses materiais.
 
 ## Validação da implementação
 

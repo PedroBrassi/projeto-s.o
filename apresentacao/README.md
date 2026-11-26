@@ -1,9 +1,13 @@
-# SO atual - apresentação sobre Linux
+# SO atual — Processos e threads no Linux
 
-O planejamento registra uma primeira versão de 15 slides no Canva. Em 25/11/2026, esta pasta ainda não contém a fonte editável nem o PDF final; a conferência do repositório não confirma conclusão ou publicação externa.
+PDF de 14 slides recebido do grupo e revisado tecnicamente em 26/11/2026. Contém comparação entre Linux, KernelPlay e xv6, capturas reais da reprodução de Gabriel e referências.
 
-As correções detalhadas e o responsável estão no [planejamento](../docs/planejamento.md), seção Pedro Lima. Revisar a descrição do KernelPlay, a demonstração real proc_demo/uthread, o escalonador do xv6, os estados do Linux e as referências.
+- [PDF revisado para apresentação e publicação](processos-threads-linux.pdf).
+- [PDF original recebido, preservado sem alterações](originais/processos-threads-linux-recebido.pdf).
+- [Registro das correções e fontes consultadas](revisao-slides.md).
+- [Justificativa técnica do KernelPlay](../docs/justificativa/README.md).
+- [Reprodução independente no xv6](../xv6-demo/evidencias/reproducao-gabriel.md).
 
-Salvar nesta pasta `processos-threads-linux.pdf` e a fonte editável (`.pptx`) ou o link de edição do Canva. A comparação deve usar a [justificativa revisada](../docs/justificativa/README.md) e as [evidências do xv6](../xv6-demo/README.md).
+O PDF recebido já usa páginas rasterizadas. A revisão preserva a composição original e acrescenta correções em quatro slides; a reexportação reduz o tamanho para facilitar o acesso no Padlet.
 
-Após revisão conjunta, anexar o PDF ao post existente da coluna SO atual no Padlet. A primeira versão registrada não equivale à entrega final.
+**Pendente:** fornecer a fonte editável (`.pptx`) ou um link de edição do Canva. O PDF revisado não substitui esse arquivo. A conferência conjunta e o ensaio da apresentação ainda dependem do grupo. A publicação deve atualizar o post existente da coluna SO atual, sem criar duplicação.

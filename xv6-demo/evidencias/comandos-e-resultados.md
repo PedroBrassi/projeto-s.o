@@ -13,6 +13,10 @@ Ambiente: ver `ambiente.txt`. Base: `xv6-labs-2024`, branch `util`, commit `79e8
 
 Em 2026-11-20, antes de qualquer alteração, o xv6 original (`util@79e8024`) foi compilado e iniciado com `make qemu`: boot com 3 harts, `init: starting sh` e `ls` listando os programas padrão. Essa sessão não foi gravada em arquivo.
 
+## Reprodução independente por Gabriel
+
+O [registro da reprodução de Gabriel Alves Domingos](reproducao-gabriel.md), incorporado em 26/11/2026, reúne três capturas originais e os resultados observados. A execução em cópia limpa foi confirmada por Pedro Brassi Luccas. A data exata da execução e o log completo dessa sessão não foram informados; os logs acima permanecem atribuídos às sessões originais.
+
 ## Comandos
 
 | Ambiente | Comando | Finalidade |
@@ -39,7 +43,7 @@ Em 2026-11-20, antes de qualquer alteração, o xv6 original (`util@79e8024`) fo
 | 8 | Encerramento correto | A e B terminam; `main` encerra com cinco `[OK]` | conforme esperado | ✅ |
 | 9 | Repetição sem travamento | execuções seguidas funcionam | 6× `uthread` e várias `proc_demo` sem travar | ✅ |
 | 10 | Reprodução em cópia limpa | patch aplicável; compila do zero; mesmos resultados | `PATCH APLICAVEL`; compilação completa; ambos `[OK]` | ✅ |
-| 11 | Reprodução por outro integrante | seguir o README e obter os mesmos resultados | — | ⏳ pendente |
+| 11 | Reprodução por outro integrante | executar os três comandos e obter os resultados esperados | Gabriel: `proc_demo`, `proc_demo pausa` + `Ctrl-P` e `uthread`, com verificações aprovadas nas três capturas; cópia limpa confirmada pelo grupo | ✅ |
 
 ## Ocorrências registradas
 

@@ -21,13 +21,15 @@ xv6-demo/
     integracao.patch       todas as alterações em relação à base registrada
   evidencias/
     ambiente.txt                        versões reais do ambiente
-    comandos-e-resultados.md            esperado x observado x pendente
+    comandos-e-resultados.md            esperado x observado e situação das verificações
+    reproducao-gabriel.md               reprodução independente com capturas originais
     passo3-proc_demo.txt                sessão gravada do experimento 1
     passo4-uthread-e-copia-limpa.txt    sessão gravada do experimento 2 e da reprodução limpa
     capturas/
       passo3-ctrlp-zombie.png           Ctrl-P antes do wait(): filho zombie
       passo3-ctrlp-apos-wait.png        Ctrl-P depois do wait(): filho fora da tabela
       passo7-copia-limpa.png            proc_demo e uthread na cópia limpa com o patch
+      gabriel/                         capturas de proc_demo, proc_demo pausa e uthread
 ```
 
 ## Ambiente e versão exata
@@ -40,7 +42,7 @@ xv6-demo/
 | Base do xv6 | `git://g.csail.mit.edu/xv6-labs-2024`, branch `util`, commit `79e8024d61c3dd92ccf064fc67bb99cb999f70ab` |
 | Esqueleto do Uthread | `git://g.csail.mit.edu/xv6-labs-2023`, branch `thread`, commit `0d65be5d1d880afafbf08c2adb605cf9f72216e2` |
 
-Detalhes completos no [registro do ambiente](evidencias/ambiente.txt). Os resultados esperados, observados e a reprodução independente pendente estão em [comandos e resultados](evidencias/comandos-e-resultados.md).
+Detalhes completos no [registro do ambiente](evidencias/ambiente.txt). Os resultados esperados, observados e a reprodução independente de Gabriel estão em [comandos e resultados](evidencias/comandos-e-resultados.md).
 
 O branch `thread` não existe em `xv6-labs-2024`, nem na imagem do professor nem no servidor do MIT. Por isso, apenas o esqueleto de `uthread.c`, `uthread_switch.S` e a regra de compilação foram tomados do `xv6-labs-2023` e aplicados sobre a base 2024. A ligação do `uthread` usa o script `user/user.ld`, o mesmo dos demais programas da versão 2024.
 
@@ -174,7 +176,7 @@ Dentro do contêiner, o branch `util` foi clonado da cópia embutida na imagem p
 
 - A pausa do `proc_demo pausa` é fixa (cerca de 5 s). Se o `Ctrl-P` for pressionado depois do `wait()`, o filho já não aparece como `zombie`.
 - Testado apenas com a imagem `so-xv6:2024` e a base `util@79e8024`.
-- A reprodução por outro integrante do grupo ainda está pendente.
+- A reprodução por Gabriel Alves Domingos está registrada em [reprodução independente](evidencias/reproducao-gabriel.md), com capturas dos três comandos e verificações aprovadas. O grupo confirmou a execução em cópia limpa; a data exata e o log integral dessa sessão não foram informados.
 
 ## Relação com o KernelPlay
 

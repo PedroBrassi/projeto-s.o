@@ -4,64 +4,49 @@ Tema: **Processos e Threads**.
 
 Avise no grupo ao entregar cada etapa e, se houver dificuldade, avise antes para redistribuirmos as tarefas.
 
-Conferência documental em 25/11/2026, com base nos arquivos disponíveis no repositório. A revisão da justificativa foi atualizada; os demais itens mantêm o status registrado, sem nova confirmação de conclusão.
+Conferência documental em 26/11/2026, com base nos arquivos disponíveis no repositório. A justificativa e o registro de testes foram atualizados. A reprodução por Gabriel foi confirmada com capturas e informação de execução em cópia limpa. O PDF recebido dos slides contém 14 páginas e foi revisado; a fonte editável e a revisão conjunta continuam a confirmar.
 
 ## Entregas
 
 | # | Entrega | Responsável | Pasta | Situação |
 |---|---|---|---|---|
-| 1 | Justificativa técnica do simulador KernelPlay (PDF) | Pedro Brassi Luccas | `docs/justificativa/` | Entregue: Markdown, Word e PDF revisados em 25/11/2026, com prompts de IA, agente, heurísticas de Nielsen e justificativa da carga fixa; revisão conjunta (parte 5) e publicação no Padlet pendentes |
+| 1 | Justificativa técnica do simulador KernelPlay (PDF) | Pedro Brassi Luccas | `docs/justificativa/` | Entregue: Markdown, Word e PDF revisados em 26/11/2026, com prompts de IA, agente, heurísticas de Nielsen e justificativa da carga fixa; reprodução independente incluída; revisão conjunta a confirmar e publicação acompanhada abaixo |
 | 2 | Implementação da demonstração no xv6 | Aurélio Junior e Pedro Brassi Luccas | `xv6-demo/codigo/` e `xv6-demo/README.md` | Entregue: processos (`proc_demo`) e threads de usuário (`uthread`), patch de integração, README e reprodução em cópia limpa; corrige apenas o que os testes apontarem |
-| 3 | Execução dos testes e registro dos comandos e resultados | Gabriel Alves Domingos | `xv6-demo/evidencias/` | Há o registro da execução feita na implementação; reprodução independente pendente (ver abaixo) |
-| 4 | Slides sobre processos e threads em um SO atual (Linux) | Pedro Lima | `apresentacao/` | Primeira versão no Canva (15 slides); correções e envio ao repositório pendentes (ver abaixo) |
-| 5 | Revisão final e publicação dos materiais no Padlet | Ana Flávia dos Santos Peixoto | Padlet | Pendente (ver abaixo) |
+| 3 | Execução dos testes e registro dos comandos e resultados | Gabriel Alves Domingos | `xv6-demo/evidencias/` | Concluída a reprodução por Gabriel em cópia limpa, conforme confirmação do grupo; capturas dos três comandos e verificações aprovadas registradas em `xv6-demo/evidencias/reproducao-gabriel.md` |
+| 4 | Slides sobre processos e threads em um SO atual (Linux) | Pedro Lima | `apresentacao/` | PDF de 14 slides recebido, revisado e preservado junto do original; fonte editável ou link de edição do Canva pendente |
+| 5 | Revisão final e publicação dos materiais no Padlet | Ana Flávia dos Santos Peixoto | Padlet | Revisão técnica documental concluída; atualização dos anexos em andamento; revisão conjunta a confirmar |
 | 6 | Apresentação do trabalho no dia | Guilherme Gouvêa da Silva e Victor Orlando Avelar (disponibilidade a confirmar) | — | Pendente (ver abaixo) |
 
 ## O que falta, por responsável
 
-As partes 1 e 2 já foram entregues; a parte 6 depende da confirmação dos apresentadores. Cada item abaixo é de responsabilidade de quem está indicado. Ao concluir, avise no grupo e marque o item como feito (`[x]`) neste arquivo.
+As partes 1, 2 e a reprodução da parte 3 já foram entregues; a parte 6 depende da confirmação dos apresentadores. Cada item abaixo é de responsabilidade de quem está indicado. Ao concluir, avise no grupo e marque o item como feito (`[x]`) neste arquivo.
 
 ### Gabriel Alves Domingos — Testes
 
-- [ ] Reproduzir a demonstração do xv6 seguindo [`xv6-demo/README.md`](../xv6-demo/README.md), seção "Como reproduzir". É preciso o kit do professor (`xv6.sh` + `so-xv6-2024.tar`) e Docker.
-- [ ] Executar `proc_demo`, `proc_demo pausa` (com `Ctrl-P` durante a pausa) e `uthread`, digitando um comando por vez.
-- [ ] Gravar a sessão (por exemplo, `script -q sessao.txt -c "bash xv6.sh"`) e salvar o log e os prints em `xv6-demo/evidencias/`, com nomes que indiquem a reprodução (por exemplo, `reproducao-gabriel.txt`).
-- [ ] Preencher o item 11 de [`xv6-demo/evidencias/comandos-e-resultados.md`](../xv6-demo/evidencias/comandos-e-resultados.md) com o resultado esperado, o observado e a data. Registrar somente o que foi realmente executado.
-- [ ] Se algo falhar, avisar no grupo com a saída do terminal, para que a parte 2 corrija.
+- [x] Reproduzir os experimentos em cópia limpa, conforme confirmação do grupo.
+- [x] Executar `proc_demo`, `proc_demo pausa` com `Ctrl-P` antes da coleta e `uthread`, com resultados esperados confirmados nas capturas.
+- [x] Incorporar as três capturas originais em `xv6-demo/evidencias/capturas/gabriel/` e descrever os resultados em [reprodução independente](../xv6-demo/evidencias/reproducao-gabriel.md).
+- [x] Atualizar o item 11 de [comandos e resultados](../xv6-demo/evidencias/comandos-e-resultados.md).
+
+Registro documental em 26/11/2026. A data exata da execução, o ambiente específico e o log integral dessa sessão não foram informados. Se disponíveis, podem ser acrescentados ao registro; os logs antigos não são atribuídos a Gabriel.
 
 ### Pedro Lima — Slides sobre Linux
 
-Correções na primeira versão:
+- [x] Receber o PDF com 14 slides e preservar o original.
+- [x] Conferir a descrição do KernelPlay e a comparação com a demonstração real `proc_demo`/`uthread`.
+- [x] Identificar as capturas como evidências do xv6 e corrigir `CLONE_THREAD`.
+- [x] Corrigir o esquema do escalonador para o xv6 RISC-V e a explicação dos estados do Linux.
+- [x] Conferir a presença de referências e salvar o [PDF revisado](../apresentacao/processos-threads-linux.pdf).
+- [ ] Acrescentar a fonte editável (`.pptx`) ou o link de edição do Canva.
 
-- [ ] **Slides 9 e 11 (KernelPlay):** remover "não foi identificada documentação ou implementação verificável". O KernelPlay é o simulador do grupo e está documentado em [`docs/justificativa/`](justificativa/). Descrever:
-  - máquina de estados pronto/executando/bloqueado/zumbi, em que `fork` cria um filho pronto, `exit` gera um zumbi e `wait` faz a coleta;
-  - o minigame Seja o Escalonador, com dois núcleos e threads de mesmo PID nos modelos 1:1 e N:1 (em N:1, threads do mesmo processo não ocupam os dois núcleos e uma E/S bloqueante suspende todas);
-  - o laboratório com FCFS, SJF, SRTF e Round-Robin;
-  - o limite: é uma representação, sem cópia real de memória nem de registradores (versão `9989806`).
-- [ ] **Slide 15 (Demonstração no xv6):** trocar `echo "olá" | cat` pela demonstração real do grupo:
-  - `proc_demo`: PIDs distintos; o filho muda a variável de 100 para 999 e o pai continua com 100; `exit(42)` e `wait` devolvendo o PID e `status = 42`; o filho em estado zombie no `Ctrl-P` antes da coleta;
-  - `uthread`: duas threads de usuário no mesmo PID, com pilhas próprias, troca de contexto em RISC-V e contador de 0 a 10 alternando A e B (modelo N:1);
-  - o ambiente `xv6-labs-2024` (`util@79e8024`) com a imagem `so-xv6:2024`;
-  - uma das capturas de `xv6-demo/evidencias/capturas/`.
-
-  Retirar também a frase sobre "o pipe sendo criado" no KernelPlay.
-- [ ] **Slide 10:** o xv6 não tem "fila de processos prontos"; o escalonador percorre a tabela `proc[]` procurando processos `RUNNABLE`.
-- [ ] **Slide 13:** usar os estados do Linux vistos no `ps`: R (executando ou pronto), S e D (bloqueado), T (parado) e Z (zumbi). Retirar "Novo = ainda não carregado na memória".
-- [ ] **Acrescentar um slide de referências:**
-  - Maziero, *Sistemas Operacionais: Conceitos e Mecanismos*;
-  - man-pages `clone(2)`, `pthreads(7)`, `futex(2)`, `sched(7)`, `namespaces(7)` e `proc(5)`;
-  - documentação do kernel, *EEVDF Scheduler*;
-  - livro do xv6 (rev4);
-  - MIT 6.1810, *Lab Multithreading*;
-  - repositório e KernelPlay.
-- [ ] **Salvar em [`apresentacao/`](../apresentacao/README.md):** `processos-threads-linux.pdf` e a fonte editável (`.pptx` exportado do Canva) ou o link de edição do Canva.
+Detalhes e fontes em [revisão dos slides](../apresentacao/revisao-slides.md). A revisão documental não substitui a conferência conjunta e o ensaio pelo grupo.
 
 ### Ana Flávia dos Santos Peixoto — Revisão final e Padlet
 
 - [ ] Revisar a justificativa ([`docs/justificativa/justificativa-tecnica.pdf`](justificativa/justificativa-tecnica.pdf)) e os slides corrigidos, e devolver sugestões no grupo.
-- [ ] Conferir as entregas: nomes de arquivos, PDFs que abrem, links, referências e o código em `xv6-demo/`.
+- [x] Conferir tecnicamente nomes, PDFs, links, referências e a documentação do código em `xv6-demo/`; esta etapa documental não representa nova execução do kernel.
 - [ ] Conferir no enunciado original se a entrada de carga pelo usuário é obrigatória ou apenas parte do prompt sugerido. A versão atual do minigame usa carga fixa; a justificativa explica a escolha e seu limite.
-- [ ] Usar a justificativa revisada em 25/11/2026 na publicação; os documentos registram o agente Codex e informam que a versão exata do modelo não foi registrada.
+- [x] Preparar a justificativa revisada em 26/11/2026 para publicação; os documentos registram o agente Codex e informam que a versão exata do modelo não foi registrada.
 - [ ] Atualizar os posts existentes do Padlet, sem duplicar:
   - **Simulador:** link do KernelPlay e PDF da justificativa;
   - **Demonstração no xv6:** link para `xv6-demo/` (README, código e evidências);

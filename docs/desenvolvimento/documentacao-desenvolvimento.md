@@ -2,13 +2,13 @@
 
 Projeto Integrador de Sistemas Operacionais
 
-Grupo 3 | Processos e Threads | Revisão documental de 25 de novembro de 2026
+Grupo 3 | Processos e Threads | Revisão documental de 26 de novembro de 2026
 
 ## Apresentação
 
 O KernelPlay é uma plataforma educativa que combina trilhas de estudo, desafios, simulações, terminal e exercícios de laboratório para ensinar Sistemas Operacionais. O foco do Projeto Integrador é Processos e Threads; memória, arquivos e entrada e saída ampliam o contexto necessário para entender como as tarefas utilizam os recursos do sistema.
 
-Este documento descreve o produto, sua organização pedagógica, arquitetura, algoritmos, decisões de implementação, evolução registrada, validação e manutenção. A versão de referência é o commit 998980660419f90c246a42e0e7219967799ba175, que inclui o minigame Seja o Escalonador. A plataforma é executada no navegador e mantém modelos didáticos em JavaScript; ela não inicializa um kernel nem executa comandos no computador do aluno. A revisão documental de 25/11/2026 atualiza a situação das entregas e os vínculos com a justificativa. A descrição arquitetural conserva a versão de referência; as correções didáticas posteriores estão registradas em docs/revisao-conteudo-2026-11-23.md.
+Este documento descreve o produto, sua organização pedagógica, arquitetura, algoritmos, decisões de implementação, evolução registrada, validação e manutenção. A versão de referência é o commit 998980660419f90c246a42e0e7219967799ba175, que inclui o minigame Seja o Escalonador. A plataforma é executada no navegador e mantém modelos didáticos em JavaScript; ela não inicializa um kernel nem executa comandos no computador do aluno. A revisão documental de 26/11/2026 atualiza a situação das entregas e os vínculos com a justificativa. A descrição arquitetural conserva a versão de referência; as correções didáticas posteriores estão registradas em docs/revisao-conteudo-2026-11-23.md.
 
 ### Identificação e acesso
 
@@ -317,7 +317,7 @@ O jogo não usa compilação, instalação de pacotes ou pipeline de build no se
 
 O minigame Seja o Escalonador está finalizado no escopo implementado e integra a versão 9989806. A plataforma possui os recursos documentados, com limitações explícitas e possibilidade de revisão pelo grupo. Esta entrega acrescenta a documentação de desenvolvimento e a justificativa técnica em fonte editável e PDF.
 
-Na conferência documental de 25/11/2026, xv6-demo/ contém os experimentos proc_demo e uthread, código, patch, ambiente, logs e capturas reais. O registro de testes ainda identifica como pendente a reprodução por outro integrante; esta revisão não representa nova execução. O planejamento registra uma primeira versão dos slides no Canva, mas apresentacao/ ainda não contém a fonte editável nem o PDF final. A justificativa foi revisada com prompts de IA, identificação do agente, análise das heurísticas de Nielsen e esclarecimento sobre a carga fixa; a versão exata do modelo de IA não foi registrada. A revisão conjunta e a publicação dos materiais no Padlet continuam pendentes conforme os registros; gerar arquivos locais não os publica automaticamente.
+Na conferência documental de 26/11/2026, xv6-demo/ contém os experimentos proc_demo e uthread, código, patch, ambiente, logs e capturas reais. A reprodução independente por Gabriel Alves Domingos está confirmada pelas capturas de proc_demo, proc_demo pausa com Ctrl-P e uthread, todas com verificações aprovadas. O grupo confirmou a execução em cópia limpa. O registro foi incorporado em 26/11/2026 em xv6-demo/evidencias/reproducao-gabriel.md; a data exata da execução e o log completo dessa sessão não foram informados. Esta atualização documental não representa uma nova execução pelo autor da revisão. A pasta apresentacao/ contém o PDF recebido de 14 slides e a versão revisada processos-threads-linux.pdf, com comparação entre Linux, KernelPlay e xv6 e referências. O original foi preservado. A fonte editável ou o link de edição do Canva ainda não foi fornecido. A justificativa foi revisada com prompts de IA, identificação do agente, análise das heurísticas de Nielsen e esclarecimento sobre a carga fixa; a versão exata do modelo de IA não foi registrada. A revisão conjunta pelo grupo permanece a confirmar. A publicação dos anexos finais no Padlet é acompanhada separadamente em docs/planejamento.md.
 
 Extensões possíveis incluem ampliar testes do simulador de estados e do shell, criar políticas automáticas selecionáveis no minigame, salvar comparações entre sessões e realizar avaliação com alunos. Essas possibilidades não são funcionalidades concluídas. Qualquer política nova deverá explicitar desempate, instante de preempção, custo de troca e população usada nas métricas para manter a comparação interpretável.
 
