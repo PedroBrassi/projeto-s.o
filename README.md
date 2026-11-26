@@ -38,11 +38,11 @@ projeto-s.o/
 | Justificativa técnica | Revisão documental de 26/11/2026 em Markdown, Word e PDF: prompts de IA, agente, heurísticas de Nielsen e carga fixa; reprodução independente do xv6 incluída; revisão conjunta do grupo a confirmar | [Documentos](docs/justificativa/README.md) |
 | Demonstração no xv6 | Processos (`fork`/`wait`/`exit`) e threads de usuário (`uthread`, modelo N:1) implementados e executados no `xv6-labs-2024` (`util@79e8024`), com patch reproduzido em cópia limpa; reprodução independente por Gabriel confirmada com capturas e cópia limpa informada pelo grupo; código e evidências disponíveis para consulta | [Roteiro, código e evidências](xv6-demo/README.md) |
 | SO atual | PDF recebido com 14 slides e revisão técnica de 26/11/2026; original preservado; fonte editável ou link de edição do Canva pendente | [Orientações](apresentacao/README.md) |
-| Padlet | Identificação, quatro colunas, link do simulador e modelo de avaliações configurados; atualização dos anexos finais em andamento | [Padlet do grupo](https://padlet.com/pedroluccas2/grupo-3-processos-e-threads-s024zwdrjwwsaqd4z88l) |
+| Padlet | Conferido em 26/11/2026: seis posts existentes, justificativa e slides revisados anexados, evidências de Gabriel vinculadas; comentários ativos e acesso por link sem senha/login | [Padlet do grupo](https://padlet.com/pedroluccas2/grupo-3-processos-e-threads-s024zwdrjwwsaqd4z88l) |
 
 O conteúdo didático sobre xv6 dentro do jogo não comprova a execução da demonstração prática; as evidências reais estão em [`xv6-demo/evidencias/`](xv6-demo/evidencias/comandos-e-resultados.md).
 
-Situação documental conferida em 26/11/2026 com base nos arquivos do repositório; a publicação dos anexos é acompanhada no planejamento, e a revisão conjunta depende da confirmação do grupo. Responsáveis e situação detalhada: [planejamento](docs/planejamento.md).
+Situação documental conferida em 26/11/2026 com base nos arquivos do repositório; a publicação dos anexos foi concluída e registrada em [conferência do Padlet](docs/publicacao-padlet-2026-11-26.md). A revisão conjunta depende da confirmação do grupo. Responsáveis e situação detalhada: [planejamento](docs/planejamento.md).
 
 ## Documentação da plataforma
 

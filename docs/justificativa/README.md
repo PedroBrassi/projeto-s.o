@@ -6,7 +6,7 @@ Documento produzido em 19/11/2026, com revisão documental em 26/11/2026. A desc
 - [Versão editável em Word](justificativa-tecnica.docx)
 - [Fonte em Markdown](justificativa-tecnica.md)
 
-O minigame Seja o Escalonador está finalizado no escopo implementado. A justificativa foi revisada em 26/11/2026, com fonte preta uniforme no Word e no PDF; a revisão conjunta do grupo permanece a confirmar e a publicação é acompanhada no [planejamento](../planejamento.md). A demonstração real no xv6 e os slides continuam sendo entregas independentes.
+O minigame Seja o Escalonador está finalizado no escopo implementado. A justificativa foi revisada em 26/11/2026, com fonte preta uniforme no Word e no PDF; o PDF desta revisão foi anexado ao post existente da coluna Simulador em 26/11/2026, conforme o [registro de publicação](../publicacao-padlet-2026-11-26.md). A revisão conjunta do grupo permanece a confirmar. A demonstração real no xv6 e os slides continuam sendo entregas independentes.
 
 Consulte também a [documentação do desenvolvimento da plataforma](../desenvolvimento/documentacao-desenvolvimento.md).
 

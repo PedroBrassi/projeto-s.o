@@ -5,3 +5,8 @@
 *.png  binary
 *.jpg  binary
 *.webp binary
+
+# Documentos e apresentações não devem receber conversão de quebras de linha
+*.pdf  binary
+*.docx binary
+*.pptx binary
